@@ -74,12 +74,12 @@ export const questions: Question[] = [
   },
   {
     id: "q8",
-    prompt: "Your climbing-session vibe is…",
+    prompt: "Your energy during a session is best described as…",
     answers: [
-      { id: "A", label: "Locked in, full sending energy.", scores: { power: 1, stoke: 3 } },
-      { id: "B", label: "Calm, quiet, totally dialed in.", scores: { chill: 3, beta: 1 } },
-      { id: "C", label: "Vibing to whatever the gym's playing.", scores: { social: 3 } },
-      { id: "D", label: "Outside, just nature and fresh air.", scores: { adventure: 3, chill: 1 } },
+      { id: "A", label: "Loud and amped — LET'S GO.", scores: { power: 1, stoke: 3 } },
+      { id: "B", label: "Quiet and focused, in my own zone.", scores: { chill: 3, beta: 1 } },
+      { id: "C", label: "Chatting and hyping everyone up.", scores: { social: 3 } },
+      { id: "D", label: "Restless — always onto the next new thing.", scores: { adventure: 3, chill: 1 } },
     ],
   },
   {
