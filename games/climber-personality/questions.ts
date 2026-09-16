@@ -67,7 +67,7 @@ export const questions: Question[] = [
     prompt: "The gym just set new routes. You…",
     answers: [
       { id: "A", label: "Already tried them all before warming up.", scores: { power: 2, stoke: 2 } },
-      { id: "B", label: "Study them from the ground first.", scores: { beta: 3 } },
+      { id: "B", label: "Watch someone crush it, then steal their beta.", scores: { beta: 3 } },
       { id: "C", label: "Ask everyone which ones are good.", scores: { social: 3 } },
       { id: "D", label: "Go straight for the wildest-looking line.", scores: { adventure: 3 } },
     ],
