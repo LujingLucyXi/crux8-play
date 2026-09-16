@@ -48,6 +48,8 @@ export default function EmailCapture({
       </p>
       <div className="mt-3 flex gap-2">
         <input
+          id="waitlist-email"
+          name="email"
           type="email"
           inputMode="email"
           autoComplete="email"
