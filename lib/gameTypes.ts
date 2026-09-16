@@ -3,6 +3,12 @@
 
 export type DimensionKey = string;
 
+export interface DimensionMeta {
+  key: DimensionKey;
+  label: string; // "POWER"
+  emoji: string;
+}
+
 export interface Answer {
   id: string; // "A" | "B" | ...
   label: string;
@@ -17,26 +23,37 @@ export interface Question {
 }
 
 export interface ResultType {
-  id: string; // matches a dimension key that this type "wins" on
-  name: string; // "THE SOCIAL CLIMBER"
+  id: string;
+  name: string; // "THE SEND MACHINE"
   emoji: string;
   tagline: string; // primary copy
-  secondary?: string;
-  // ordering of stat bars shown on the result, values 0-100
-  stats: { key: DimensionKey; label: string; value: number }[];
-  accent: string; // tailwind-ish hex used for gradients
+  secondary?: string; // fun/jokable line
+  accent: string; // hex used for gradients
+  // signature DNA vector (0-1 weight per dimension) used for matching
+  signature: Partial<Record<DimensionKey, number>>;
+}
+
+// A single player's computed DNA bar (0-100).
+export interface DnaScore {
+  key: DimensionKey;
+  label: string;
+  emoji: string;
+  value: number;
+}
+
+export interface ScoreResult {
+  resultId: string;
+  totals: Record<DimensionKey, number>;
+  dna: DnaScore[]; // player's own 0-100 breakdown, in dimension order
 }
 
 export interface GameDefinition {
   id: string;
   title: string;
   subtitle?: string;
-  dimensions: DimensionKey[];
+  dimensions: DimensionMeta[];
   questions: Question[];
   results: ResultType[];
-  // deterministic scoring: given answers (per question index) + seed -> result id
-  score: (answerIds: string[], seed: number) => {
-    resultId: string;
-    totals: Record<DimensionKey, number>;
-  };
+  // deterministic scoring: given answers (per question index) + seed -> result
+  score: (answerIds: string[], seed: number) => ScoreResult;
 }

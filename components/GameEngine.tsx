@@ -2,10 +2,11 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { GameDefinition, ResultType } from "@/lib/gameTypes";
+import type { DnaScore, GameDefinition, ResultType } from "@/lib/gameTypes";
 import {
   getPlayCount,
   recordSessionStart,
+  saveWaitlist,
   updateSession,
 } from "@/lib/supabase";
 import { initAnalytics, track } from "@/lib/analytics";
@@ -34,6 +35,7 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [result, setResult] = useState<ResultType | null>(null);
+  const [dna, setDna] = useState<DnaScore[]>([]);
   const [liveCount, setLiveCount] = useState<number | null>(null);
 
   const sessionRef = useRef<string>("");
@@ -89,9 +91,10 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
   }
 
   function finish(finalAnswers: string[]) {
-    const { resultId } = game.score(finalAnswers, seedRef.current);
+    const { resultId, dna: computedDna } = game.score(finalAnswers, seedRef.current);
     const r = game.results.find((x) => x.id === resultId) ?? game.results[0];
     setResult(r);
+    setDna(computedDna);
     setPhase("calculating");
     track("game_completed", { session_id: sessionRef.current, result_type: r.id });
 
@@ -161,6 +164,7 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
         <motion.div key="result" className="flex flex-1 flex-col">
           <ResultScreen
             result={result}
+            dna={dna}
             siteLabel={siteLabel}
             crux8Url={crux8Url}
             onShareClick={() =>
@@ -186,6 +190,19 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
             onPlayAgain={() => {
               track("play_again", { session_id: sessionRef.current });
               setPhase("landing");
+            }}
+            onWaitlist={async (email) => {
+              track("waitlist_submitted", {
+                session_id: sessionRef.current,
+                result_type: result.id,
+              });
+              // Store email + DNA so the future app can restore this result.
+              return saveWaitlist({
+                email,
+                session_id: sessionRef.current,
+                result_type: result.id,
+                dna,
+              });
             }}
           />
         </motion.div>

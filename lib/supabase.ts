@@ -55,6 +55,35 @@ export async function updateSession(
   }
 }
 
+export interface WaitlistEntry {
+  email: string;
+  session_id: string;
+  result_type: string;
+  dna: unknown; // player's DNA breakdown (jsonb) — enables restoring it in the app later
+}
+
+// Opt-in email capture. Doubles as GTM waitlist + makes the Climber DNA
+// transferable to the future Crux8 app (matched by email). Never blocks the UI.
+export async function saveWaitlist(entry: WaitlistEntry): Promise<boolean> {
+  const c = getClient();
+  if (!c) {
+    // Supabase not configured yet — don't show players an error. Warn in dev.
+    if (process.env.NODE_ENV === "development") {
+      // eslint-disable-next-line no-console
+      console.warn("[waitlist] Supabase not configured — email not stored:", entry.email);
+    }
+    return true;
+  }
+  try {
+    const { error } = await c
+      .from("waitlist")
+      .upsert({ ...entry, created_at: new Date().toISOString() }, { onConflict: "email" });
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
 // Returns the count of completed sessions, or null if unavailable.
 export async function getPlayCount(): Promise<number | null> {
   const c = getClient();
