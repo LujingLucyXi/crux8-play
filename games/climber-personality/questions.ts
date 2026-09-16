@@ -69,7 +69,7 @@ export const questions: Question[] = [
       { id: "A", label: "Already tried them all before warming up.", scores: { power: 2, stoke: 2 } },
       { id: "B", label: "Study them from the ground first.", scores: { beta: 3 } },
       { id: "C", label: "Ask everyone which ones are good.", scores: { social: 3 } },
-      { id: "D", label: "Not fussed — I'd rather climb outside.", scores: { adventure: 3 } },
+      { id: "D", label: "Go straight for the wildest-looking line.", scores: { adventure: 3 } },
     ],
   },
   {
