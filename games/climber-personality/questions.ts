@@ -122,4 +122,30 @@ export const questions: Question[] = [
       { id: "D", label: "Point them to someone else — I'm resting.", scores: { chill: 2 } },
     ],
   },
+  {
+    id: "q14",
+    prompt: "What matters most in a climbing partner?",
+    answers: [
+      {
+        id: "A",
+        label: "Someone strong who pushes me onto harder grades.",
+        scores: { power: 2, beta: 1 },
+      },
+      {
+        id: "B",
+        label: "Rock-solid and reliable — great catch, always on time.",
+        scores: { beta: 1, chill: 1, social: 1 },
+      },
+      {
+        id: "C",
+        label: "Good vibes — turns any session into a proper hangout.",
+        scores: { social: 2, stoke: 1 },
+      },
+      {
+        id: "D",
+        label: "Down for anything — new crags, road trips, wild ideas.",
+        scores: { adventure: 2, stoke: 1 },
+      },
+    ],
+  },
 ];
