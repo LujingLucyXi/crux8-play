@@ -27,19 +27,19 @@ export const questions: Question[] = [
     prompt: "You fall off your project. Your next move?",
     answers: [
       { id: "A", label: "Immediately try again.", scores: { power: 2, stoke: 2 } },
-      { id: "B", label: "Analyze the beta.", scores: { beta: 3 } },
-      { id: "C", label: "Change the shoes.", scores: { beta: 1, adventure: 1 } },
-      { id: "D", label: "Take a break and talk about it.", scores: { social: 2, chill: 2 } },
+      { id: "B", label: "Study the beta before the next go.", scores: { beta: 3 } },
+      { id: "C", label: "Swap into stickier shoes and adjust.", scores: { beta: 1, adventure: 1 } },
+      { id: "D", label: "Take a break and talk it out.", scores: { social: 2, chill: 2 } },
     ],
   },
   {
     id: "q4",
     prompt: "Your perfect climbing session is…",
     answers: [
-      { id: "A", label: "3 hours of pure sending.", scores: { power: 3, stoke: 1 } },
+      { id: "A", label: "Hours grinding on my project.", scores: { power: 3, stoke: 1 } },
       { id: "B", label: "Good climbs + good people.", scores: { social: 2, chill: 1, stoke: 1 } },
-      { id: "C", label: "Trying something completely new.", scores: { adventure: 3, beta: 1 } },
-      { id: "D", label: "Climbing followed by food/drinks.", scores: { social: 2, chill: 2 } },
+      { id: "C", label: "Trying routes I've never touched.", scores: { adventure: 3, beta: 1 } },
+      { id: "D", label: "Climbing, then hanging out after.", scores: { social: 2, chill: 2 } },
     ],
   },
   {
@@ -69,17 +69,17 @@ export const questions: Question[] = [
       { id: "A", label: "Already tried them all before warming up.", scores: { power: 2, stoke: 2 } },
       { id: "B", label: "Study them from the ground first.", scores: { beta: 3 } },
       { id: "C", label: "Ask everyone which ones are good.", scores: { social: 3 } },
-      { id: "D", label: "Skip them — I'm heading outdoors.", scores: { adventure: 3 } },
+      { id: "D", label: "Not fussed — I'd rather climb outside.", scores: { adventure: 3 } },
     ],
   },
   {
     id: "q8",
     prompt: "Your climbing-session vibe is…",
     answers: [
-      { id: "A", label: "Hype music, sending energy.", scores: { power: 1, stoke: 3 } },
-      { id: "B", label: "Lo-fi, calm, dialed in.", scores: { chill: 3, beta: 1 } },
-      { id: "C", label: "Whatever the group's playing.", scores: { social: 3 } },
-      { id: "D", label: "Birdsong. I'm outside.", scores: { adventure: 3, chill: 1 } },
+      { id: "A", label: "Locked in, full sending energy.", scores: { power: 1, stoke: 3 } },
+      { id: "B", label: "Calm, quiet, totally dialed in.", scores: { chill: 3, beta: 1 } },
+      { id: "C", label: "Vibing to whatever the gym's playing.", scores: { social: 3 } },
+      { id: "D", label: "Outside, just nature and fresh air.", scores: { adventure: 3, chill: 1 } },
     ],
   },
   {
@@ -89,7 +89,7 @@ export const questions: Question[] = [
       { id: "A", label: "Throw yourself at it. Now.", scores: { power: 2, stoke: 2 } },
       { id: "B", label: "Break it into micro-beta.", scores: { beta: 3 } },
       { id: "C", label: "Rally the crew to try it together.", scores: { social: 2, stoke: 1 } },
-      { id: "D", label: "Save it for an outdoor trip.", scores: { adventure: 2, chill: 1 } },
+      { id: "D", label: "Move on and try something new.", scores: { adventure: 2, chill: 1 } },
     ],
   },
   {
@@ -97,8 +97,8 @@ export const questions: Question[] = [
     prompt: "Right after a session, you're…",
     answers: [
       { id: "A", label: "Logging every attempt in an app.", scores: { beta: 3, power: 1 } },
-      { id: "B", label: "At the taco place with everyone.", scores: { social: 3, chill: 1 } },
-      { id: "C", label: "Planning next weekend's crag trip.", scores: { adventure: 3, stoke: 1 } },
+      { id: "B", label: "Grabbing food with everyone.", scores: { social: 3, chill: 1 } },
+      { id: "C", label: "Planning next weekend's outdoor trip.", scores: { adventure: 3, stoke: 1 } },
       { id: "D", label: "Flat on the mat, cooked, content.", scores: { chill: 3 } },
     ],
   },
