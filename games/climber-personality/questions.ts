@@ -97,7 +97,7 @@ export const questions: Question[] = [
     prompt: "Right after a session, you're…",
     answers: [
       { id: "A", label: "Logging every attempt in an app.", scores: { beta: 3, power: 1 } },
-      { id: "B", label: "Grabbing food with everyone.", scores: { social: 3, chill: 1 } },
+      { id: "B", label: "Food / drinks / boba — the real crux.", scores: { social: 3, chill: 1 } },
       { id: "C", label: "Planning next weekend's outdoor trip.", scores: { adventure: 3, stoke: 1 } },
       { id: "D", label: "Flat on the mat, cooked, content.", scores: { chill: 3 } },
     ],
