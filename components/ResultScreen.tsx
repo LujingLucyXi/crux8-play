@@ -49,6 +49,7 @@ export default function ResultScreen({
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
+  const [dl, setDl] = useState(false);
   const [note, setNote] = useState<string | null>(null);
 
   async function buildImage(): Promise<Blob | null> {
@@ -104,6 +105,20 @@ export default function ResultScreen({
       }
     }
     setNote("Screenshot this screen to share your result 📸");
+  }
+
+  async function handleDownload() {
+    setDl(true);
+    setNote(null);
+    const blob = await buildImage();
+    setDl(false);
+    if (blob) {
+      downloadBlob(blob);
+      onShareSuccess();
+      setNote("Saved! Post it to your IG story, WeChat Moments — anywhere 👀");
+    } else {
+      setNote("Screenshot this screen to share your result 📸");
+    }
   }
 
   function downloadBlob(blob: Blob) {
@@ -178,6 +193,18 @@ export default function ResultScreen({
           className="tap-target w-full rounded-2xl bg-gradient-to-r from-gold to-coral py-4 text-lg font-bold text-white shadow-lg shadow-coral/25 disabled:opacity-70"
         >
           {busy ? "Building DNA card…" : "SHARE MY CLIMBER DNA"}
+        </motion.button>
+        <p className="-mt-1 text-center text-xs text-ink/45">
+          Shares to Instagram, WeChat &amp; more
+        </p>
+
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          onClick={handleDownload}
+          disabled={dl}
+          className="tap-target w-full rounded-2xl border-2 border-ink/15 bg-white py-3.5 text-base font-bold text-ink disabled:opacity-70"
+        >
+          {dl ? "Saving…" : "⬇ Download DNA card"}
         </motion.button>
 
         {note && <p className="text-center text-sm font-medium text-teal">{note}</p>}
