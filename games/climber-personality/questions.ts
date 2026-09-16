@@ -44,12 +44,12 @@ export const questions: Question[] = [
   },
   {
     id: "q5",
-    prompt: "What matters most in a climbing partner?",
+    prompt: "Real talk — why do you climb?",
     answers: [
-      { id: "A", label: "Strong.", scores: { power: 2, beta: 1 } },
-      { id: "B", label: "Reliable.", scores: { beta: 1, chill: 1, social: 1 } },
-      { id: "C", label: "Fun.", scores: { social: 2, stoke: 1 } },
-      { id: "D", label: "Adventurous.", scores: { adventure: 2, stoke: 1 } },
+      { id: "A", label: "To get strong and stay in shape.", scores: { power: 2, stoke: 1 } },
+      { id: "B", label: "To switch my brain off — it's my meditation.", scores: { chill: 3 } },
+      { id: "C", label: "For the back muscles, obviously. 💪", scores: { power: 1, stoke: 2 } },
+      { id: "D", label: "The gym homies (and hotties).", scores: { social: 3 } },
     ],
   },
   {
@@ -80,16 +80,6 @@ export const questions: Question[] = [
       { id: "B", label: "Quiet and focused, in my own zone.", scores: { chill: 3, beta: 1 } },
       { id: "C", label: "Chatting and hyping everyone up.", scores: { social: 3 } },
       { id: "D", label: "Restless — always onto the next new thing.", scores: { adventure: 3, chill: 1 } },
-    ],
-  },
-  {
-    id: "q9",
-    prompt: "A grade harder than you've ever flashed. You…",
-    answers: [
-      { id: "A", label: "Throw yourself at it. Now.", scores: { power: 2, stoke: 2 } },
-      { id: "B", label: "Break it into micro-beta.", scores: { beta: 3 } },
-      { id: "C", label: "Rally the crew to try it together.", scores: { social: 2, stoke: 1 } },
-      { id: "D", label: "Nah, not for me, not today. Onto the next.", scores: { adventure: 2, chill: 1 } },
     ],
   },
   {
