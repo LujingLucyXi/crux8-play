@@ -89,7 +89,7 @@ export const questions: Question[] = [
       { id: "A", label: "Throw yourself at it. Now.", scores: { power: 2, stoke: 2 } },
       { id: "B", label: "Break it into micro-beta.", scores: { beta: 3 } },
       { id: "C", label: "Rally the crew to try it together.", scores: { social: 2, stoke: 1 } },
-      { id: "D", label: "Move on and try something new.", scores: { adventure: 2, chill: 1 } },
+      { id: "D", label: "Nah, not for me, not today. Onto the next.", scores: { adventure: 2, chill: 1 } },
     ],
   },
   {
