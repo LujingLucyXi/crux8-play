@@ -36,10 +36,10 @@ export const questions: Question[] = [
     id: "q4",
     prompt: "Your perfect climbing session is…",
     answers: [
-      { id: "A", label: "Hours grinding on my project.", scores: { power: 3, stoke: 1 } },
+      { id: "A", label: "Hours of pure sending.", scores: { power: 3, stoke: 1 } },
       { id: "B", label: "Good climbs + good people.", scores: { social: 2, chill: 1, stoke: 1 } },
       { id: "C", label: "Trying routes I've never touched.", scores: { adventure: 3, beta: 1 } },
-      { id: "D", label: "Climbing, then hanging out after.", scores: { social: 2, chill: 2 } },
+      { id: "D", label: "80% sitting on the mat, 20% climbing, 100% vibes.", scores: { social: 2, chill: 2 } },
     ],
   },
   {
