@@ -12,14 +12,14 @@ export default function ProgressBar({
   const pct = Math.round((current / total) * 100);
   return (
     <div className="w-full">
-      <div className="mb-2 flex items-center justify-between text-sm font-semibold text-sky/80">
+      <div className="mb-2 flex items-center justify-between text-sm font-semibold text-ink/50">
         <span>
           {current} / {total}
         </span>
         <span>{pct}%</span>
       </div>
       <div
-        className="h-2 w-full overflow-hidden rounded-full bg-white/10"
+        className="h-2 w-full overflow-hidden rounded-full bg-ink/10"
         role="progressbar"
         aria-valuenow={current}
         aria-valuemin={0}

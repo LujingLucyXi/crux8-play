@@ -9,6 +9,23 @@ import ShareCard from "./ShareCard";
 import BackgroundFX from "./BackgroundFX";
 import EmailCapture from "./EmailCapture";
 
+// Darkens a hex color if it's too light to read on the cream background.
+function readable(hex: string): string {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  if (lum <= 0.6) return hex;
+  const f = 0.52;
+  return (
+    "#" +
+    [r, g, b]
+      .map((v) => Math.round(v * f).toString(16).padStart(2, "0"))
+      .join("")
+  );
+}
+
 export default function ResultScreen({
   result,
   dna,
@@ -100,7 +117,8 @@ export default function ResultScreen({
     URL.revokeObjectURL(url);
   }
 
-  const accentText = result.accent === "#0F2D3A" ? "#C7D9EB" : result.accent;
+  // Darken light accent colors so the archetype name stays readable on cream.
+  const accentText = readable(result.accent);
 
   return (
     <div className="relative flex flex-1 flex-col px-6 pb-8 pt-8">
@@ -112,7 +130,7 @@ export default function ResultScreen({
         transition={{ duration: 0.5 }}
         className="text-center"
       >
-        <p className="text-sm font-semibold tracking-[0.3em] text-sky/70">YOU ARE</p>
+        <p className="text-sm font-semibold tracking-[0.3em] text-ink/50">YOU ARE</p>
         <motion.div
           className="my-2 text-6xl"
           initial={{ scale: 0 }}
@@ -124,19 +142,19 @@ export default function ResultScreen({
         <h1 className="text-3xl font-bold leading-tight" style={{ color: accentText }}>
           {result.name}
         </h1>
-        <p className="mx-auto mt-2 max-w-xs text-lg font-medium text-white">
+        <p className="mx-auto mt-2 max-w-xs text-lg font-semibold text-ink">
           “{result.tagline}”
         </p>
         {result.secondary && (
-          <p className="mt-2 text-sm text-white/60">{result.secondary}</p>
+          <p className="mt-2 text-sm text-ink/60">{result.secondary}</p>
         )}
       </motion.div>
 
       <div className="mt-6">
-        <p className="mb-3 text-center text-sm font-semibold tracking-[0.2em] text-sky/70">
+        <p className="mb-3 text-center text-sm font-semibold tracking-[0.2em] text-ink/50">
           YOUR CLIMBER DNA 🧬
         </p>
-        <div className="flex flex-col gap-3 rounded-3xl bg-white/[0.06] p-5 backdrop-blur">
+        <div className="flex flex-col gap-3 rounded-3xl bg-white p-5 shadow-lg shadow-ink/5 ring-1 ring-ink/5">
           {dna.map((s, i) => (
             <StatBar
               key={s.key}
@@ -148,7 +166,7 @@ export default function ResultScreen({
         </div>
       </div>
 
-      <p className="mt-6 text-center text-sm text-white/70">
+      <p className="mt-6 text-center text-sm text-ink/60">
         Send this to your climbing partner 👀
       </p>
 
@@ -157,20 +175,20 @@ export default function ResultScreen({
           whileTap={{ scale: 0.97 }}
           onClick={handleShare}
           disabled={busy}
-          className="tap-target w-full rounded-2xl bg-gradient-to-r from-gold to-coral py-4 text-lg font-bold text-navy disabled:opacity-70"
+          className="tap-target w-full rounded-2xl bg-gradient-to-r from-gold to-coral py-4 text-lg font-bold text-white shadow-lg shadow-coral/25 disabled:opacity-70"
         >
           {busy ? "Building DNA card…" : "SHARE MY CLIMBER DNA"}
         </motion.button>
 
-        {note && <p className="text-center text-sm text-gold">{note}</p>}
+        {note && <p className="text-center text-sm font-medium text-teal">{note}</p>}
 
         <EmailCapture onSubmit={onWaitlist} />
 
-        <div className="rounded-2xl border border-teal/50 bg-teal/15 p-4 text-center">
-          <p className="text-base font-semibold text-white">
+        <div className="rounded-2xl border border-teal/30 bg-teal/10 p-4 text-center">
+          <p className="text-base font-semibold text-ink">
             Be the first to follow Crux8 Climbing and stay tuned for the app.
           </p>
-          <p className="mt-1 text-sm text-white/70">
+          <p className="mt-1 text-sm text-ink/60">
             Finding climbing buddies and events never got easier.
           </p>
           <motion.a
@@ -179,7 +197,7 @@ export default function ResultScreen({
             target="_blank"
             rel="noopener noreferrer"
             onClick={onCta}
-            className="tap-target mt-3 inline-flex w-full items-center justify-center rounded-xl bg-teal py-3 text-base font-bold text-white"
+            className="tap-target mt-3 inline-flex w-full items-center justify-center rounded-xl bg-tealdeep py-3 text-base font-bold text-white"
           >
             Follow Crux8 Climbing →
           </motion.a>
@@ -187,7 +205,7 @@ export default function ResultScreen({
 
         <button
           onClick={onPlayAgain}
-          className="tap-target w-full rounded-2xl py-3 text-base font-medium text-white/60 hover:text-white"
+          className="tap-target w-full rounded-2xl py-3 text-base font-medium text-ink/50 hover:text-ink"
         >
           Play again
         </button>

@@ -30,10 +30,10 @@ export default function EmailCapture({
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-teal/50 bg-teal/15 p-4 text-center"
+        className="rounded-2xl border border-teal/30 bg-teal/10 p-4 text-center"
       >
-        <p className="text-base font-semibold text-white">You're on the list 🎉</p>
-        <p className="mt-1 text-sm text-white/70">
+        <p className="text-base font-semibold text-ink">You're on the list 🎉</p>
+        <p className="mt-1 text-sm text-ink/60">
           Your Climber DNA is saved — we&apos;ll bring it into the app when it launches.
         </p>
       </motion.div>
@@ -41,9 +41,9 @@ export default function EmailCapture({
   }
 
   return (
-    <form onSubmit={handle} className="rounded-2xl border border-white/10 bg-white/[0.05] p-4">
-      <p className="text-base font-semibold text-white">Save my Climber DNA 🧬</p>
-      <p className="mt-1 text-sm text-white/60">
+    <form onSubmit={handle} className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
+      <p className="text-base font-semibold text-ink">Save my Climber DNA 🧬</p>
+      <p className="mt-1 text-sm text-ink/60">
         Get early access to the Crux8 app + keep your result.
       </p>
       <div className="mt-3 flex gap-2">
@@ -61,13 +61,13 @@ export default function EmailCapture({
           }}
           placeholder="you@email.com"
           aria-label="Email address"
-          className="tap-target min-w-0 flex-1 rounded-xl border border-white/15 bg-navy/60 px-4 text-base text-white placeholder:text-white/40 focus:border-gold focus:outline-none"
+          className="tap-target min-w-0 flex-1 rounded-xl border border-ink/15 bg-cream px-4 text-base text-ink placeholder:text-ink/40 focus:border-gold focus:outline-none"
         />
         <motion.button
           whileTap={{ scale: 0.96 }}
           type="submit"
           disabled={state === "busy"}
-          className="tap-target shrink-0 rounded-xl bg-gold px-5 font-bold text-navy disabled:opacity-60"
+          className="tap-target shrink-0 rounded-xl bg-gold px-5 font-bold text-white disabled:opacity-60"
         >
           {state === "busy" ? "…" : "Save"}
         </motion.button>

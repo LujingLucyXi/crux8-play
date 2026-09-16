@@ -3,14 +3,16 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html,
 body {
   padding: 0;
   margin: 0;
-  background: #0f2d3a;
+  background: linear-gradient(165deg, #fff7ef 0%, #fff0e4 48%, #ffe8f1 100%);
+  background-attachment: fixed;
+  color: #17323b;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
 }

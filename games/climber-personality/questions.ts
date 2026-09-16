@@ -102,4 +102,34 @@ export const questions: Question[] = [
       { id: "D", label: "Flat on the mat, cooked, content.", scores: { chill: 3 } },
     ],
   },
+  {
+    id: "q11",
+    prompt: "It's comp day at the gym. You…",
+    answers: [
+      { id: "A", label: "Signed up weeks ago — I'm here to win.", scores: { power: 1, stoke: 2 } },
+      { id: "B", label: "Cheering the loudest from the crowd.", scores: { social: 3 } },
+      { id: "C", label: "Doing the fun-looking problems, ignoring the scorecard.", scores: { adventure: 2, chill: 1 } },
+      { id: "D", label: "Comp? I'll just do my normal session.", scores: { chill: 2, beta: 1 } },
+    ],
+  },
+  {
+    id: "q12",
+    prompt: "Your dream climbing trip is…",
+    answers: [
+      { id: "A", label: "A hard crag with one perfect project.", scores: { power: 2, beta: 1 } },
+      { id: "B", label: "Multi-day, tent, no wifi, no plan.", scores: { adventure: 3, chill: 1 } },
+      { id: "C", label: "Wherever the crew is going.", scores: { social: 3 } },
+      { id: "D", label: "A few easy climbs and a big lunch.", scores: { chill: 3 } },
+    ],
+  },
+  {
+    id: "q13",
+    prompt: "A newer climber asks you for help. You…",
+    answers: [
+      { id: "A", label: "Break down the beta, move by move.", scores: { beta: 3 } },
+      { id: "B", label: "Hype them up until they send it.", scores: { social: 2, stoke: 2 } },
+      { id: "C", label: "Just show them — by trying it yourself.", scores: { power: 2, stoke: 1 } },
+      { id: "D", label: "Point them to someone else — I'm resting.", scores: { chill: 2 } },
+    ],
+  },
 ];
