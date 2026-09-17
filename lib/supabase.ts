@@ -75,10 +75,14 @@ export async function saveWaitlist(entry: WaitlistEntry): Promise<boolean> {
     return true;
   }
   try {
+    // Plain insert (not upsert): keeps emails private — anon has no SELECT policy
+    // on waitlist, which ON CONFLICT would require. A duplicate email just means
+    // they're already on the list, so treat unique-violation (23505) as success.
     const { error } = await c
       .from("waitlist")
-      .upsert({ ...entry, created_at: new Date().toISOString() }, { onConflict: "email" });
-    return !error;
+      .insert({ ...entry, created_at: new Date().toISOString() });
+    if (!error) return true;
+    return error.code === "23505"; // already on the list
   } catch {
     return false;
   }
