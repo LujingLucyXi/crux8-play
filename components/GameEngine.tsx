@@ -26,7 +26,7 @@ type Phase = "landing" | "playing" | "calculating" | "result";
 // Seed baseline so the counter never reads as a fabricated exact headcount.
 const SEED_COUNT = 1284;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://play.crux8.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://crux8-play.vercel.app";
 const crux8Url = process.env.NEXT_PUBLIC_CRUX8_URL || "https://crux8.com";
 const siteLabel = siteUrl.replace(/^https?:\/\//, "");
 

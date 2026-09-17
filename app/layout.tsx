@@ -9,7 +9,7 @@ const poppins = Poppins({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://play.crux8.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://crux8-play.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

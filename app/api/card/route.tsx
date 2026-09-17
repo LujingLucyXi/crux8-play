@@ -21,7 +21,7 @@ export async function GET(req: Request) {
     value: s[i] ?? 0,
   }));
   const accent = result.accent === "#0F2D3A" ? "#C7D9EB" : result.accent;
-  const siteLabel = (process.env.NEXT_PUBLIC_SITE_URL || "play.crux8.com").replace(
+  const siteLabel = (process.env.NEXT_PUBLIC_SITE_URL || "crux8-play.vercel.app").replace(
     /^https?:\/\//,
     ""
   );
