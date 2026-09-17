@@ -32,10 +32,10 @@ export default function EmailCapture({
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl border border-teal/30 bg-teal/10 p-4 text-center"
       >
-        <p className="text-base font-semibold text-ink">You're on the front row 🎉</p>
+        <p className="text-base font-semibold text-ink">You're on the list 🎉</p>
         <p className="mt-1 text-sm text-ink/60">
-          Your Climber DNA is saved. We&apos;ll send your FREE early invite + founding-member
-          discount before anyone else.
+          Climber DNA saved. Promos, buddies, and good vibes are coming your way —
+          check your inbox soon.
         </p>
       </motion.div>
     );
@@ -43,13 +43,12 @@ export default function EmailCapture({
 
   return (
     <form onSubmit={handle} className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
-      <p className="text-base font-semibold text-ink">🎟️ You're invited — get in early</p>
+      <p className="text-base font-semibold text-ink">🎟️ Join the Crux8 app waitlist</p>
       <p className="mt-1 text-sm text-ink/70">
-        Be first on the Crux8 app: find the perfect buddy for a quick session tonight
-        or a group trip outdoors.
+        Find the perfect buddy for a session tonight or a group trip outdoors.
       </p>
       <p className="mt-1 text-sm font-semibold text-teal">
-        FREE early access + a founding-member discount.
+        Promos, buddies &amp; good vibes coming your way.
       </p>
       <div className="mt-3 flex gap-2">
         <input

@@ -1,11 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useRef, useState } from "react";
-import { toPng } from "html-to-image";
+import { useState } from "react";
 import type { DnaScore, ResultType } from "@/lib/gameTypes";
 import StatBar from "./StatBar";
-import ShareCard from "./ShareCard";
 import BackgroundFX from "./BackgroundFX";
 import EmailCapture from "./EmailCapture";
 
@@ -29,7 +27,6 @@ function readable(hex: string): string {
 export default function ResultScreen({
   result,
   dna,
-  siteLabel,
   crux8Url,
   onShareClick,
   onShareSuccess,
@@ -47,77 +44,63 @@ export default function ResultScreen({
   onPlayAgain: () => void;
   onWaitlist: (email: string) => Promise<boolean>;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
-  const [dl, setDl] = useState(false);
   const [note, setNote] = useState<string | null>(null);
 
-  async function buildImage(): Promise<Blob | null> {
-    if (!cardRef.current) return null;
-    try {
-      const dataUrl = await toPng(cardRef.current, {
-        pixelRatio: 1,
-        width: 1080,
-        height: 1920,
-        cacheBust: true,
-      });
-      const res = await fetch(dataUrl);
-      return await res.blob();
-    } catch {
-      return null;
-    }
+  // Server-rendered PNG (reliable on every device — no html-to-image black cards).
+  function cardUrl(): string {
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const s = dna.map((d) => d.value).join(",");
+    return `${origin}/api/card?r=${encodeURIComponent(result.id)}&s=${s}`;
   }
 
   async function handleShare() {
     onShareClick();
     setBusy(true);
     setNote(null);
-    const blob = await buildImage();
-    setBusy(false);
-
     const shareText = `I'm ${result.name} on Crux8 Play 🧗 What's your Climber DNA?`;
     const nav = navigator as Navigator & { canShare?: (d?: ShareData) => boolean };
-
-    if (blob) {
+    try {
+      const res = await fetch(cardUrl());
+      const blob = await res.blob();
       const file = new File([blob], "crux8-climber-dna.png", { type: "image/png" });
+      setBusy(false);
       if (nav.canShare && nav.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], text: shareText, title: "Crux8 Play" });
+        onShareSuccess();
+        return;
+      }
+      // No file-share support (most desktops) → download the PNG instead.
+      downloadBlob(blob);
+      onShareSuccess();
+      setNote("Saved your DNA card — post it anywhere 👀");
+    } catch {
+      setBusy(false);
+      // User cancelled the share sheet, or share failed — offer link share.
+      if (navigator.share) {
         try {
-          await navigator.share({ files: [file], text: shareText, title: "Crux8 Play" });
+          await navigator.share({ text: shareText, url: window.location.origin });
           onShareSuccess();
           return;
         } catch {
-          /* cancelled — fall through to download */
+          /* ignore */
         }
       }
-      downloadBlob(blob);
-      onShareSuccess();
-      setNote("Saved your DNA card — send it to your climbing partner 👀");
-      return;
+      setNote("Screenshot this screen to share your result 📸");
     }
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ text: shareText, title: "Crux8 Play" });
-        onShareSuccess();
-        return;
-      } catch {
-        /* ignore */
-      }
-    }
-    setNote("Screenshot this screen to share your result 📸");
   }
 
   async function handleDownload() {
-    setDl(true);
     setNote(null);
-    const blob = await buildImage();
-    setDl(false);
-    if (blob) {
+    try {
+      const res = await fetch(cardUrl());
+      const blob = await res.blob();
       downloadBlob(blob);
       onShareSuccess();
-      setNote("Saved! Post it to your IG story, WeChat Moments — anywhere 👀");
-    } else {
-      setNote("Screenshot this screen to share your result 📸");
+      setNote("Saved! Post it to IG story, WeChat Moments, 小红书 — anywhere 👀");
+    } catch {
+      // Last-resort: open the image in a new tab to long-press/right-click save.
+      window.open(cardUrl(), "_blank");
     }
   }
 
@@ -201,10 +184,9 @@ export default function ResultScreen({
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={handleDownload}
-          disabled={dl}
-          className="tap-target w-full rounded-2xl border-2 border-ink/15 bg-white py-3.5 text-base font-bold text-ink disabled:opacity-70"
+          className="tap-target w-full rounded-2xl border-2 border-ink/15 bg-white py-3.5 text-base font-bold text-ink"
         >
-          {dl ? "Saving…" : "⬇ Save card — for IG, WeChat, 小红书"}
+          ⬇ Save card — for IG, WeChat, 小红书
         </motion.button>
         <p className="-mt-1 text-center text-xs text-ink/45">
           Saves the image, then post it to any app
@@ -216,10 +198,10 @@ export default function ResultScreen({
 
         <div className="rounded-2xl border border-teal/30 bg-teal/10 p-4 text-center">
           <p className="text-base font-semibold text-ink">
-            Be the first to follow Crux8 Climbing and stay tuned for the app.
+            Join the Crux8 app waitlist
           </p>
           <p className="mt-1 text-sm text-ink/60">
-            Finding climbing buddies and events never got easier.
+            Promos, buddies, and good vibes coming your way.
           </p>
           <motion.a
             whileTap={{ scale: 0.97 }}
@@ -240,9 +222,6 @@ export default function ResultScreen({
           Play again
         </button>
       </div>
-
-      {/* Off-screen DNA card for capture */}
-      <ShareCard ref={cardRef} result={result} dna={dna} siteLabel={siteLabel} />
     </div>
   );
 }
