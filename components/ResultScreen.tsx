@@ -195,7 +195,7 @@ export default function ResultScreen({
           {busy ? "Building DNA card…" : "SHARE MY CLIMBER DNA"}
         </motion.button>
         <p className="-mt-1 text-center text-xs text-ink/45">
-          Shares to Instagram, WeChat &amp; more
+          Opens your phone&apos;s share sheet (Messages, AirDrop…)
         </p>
 
         <motion.button
@@ -204,8 +204,11 @@ export default function ResultScreen({
           disabled={dl}
           className="tap-target w-full rounded-2xl border-2 border-ink/15 bg-white py-3.5 text-base font-bold text-ink disabled:opacity-70"
         >
-          {dl ? "Saving…" : "⬇ Download DNA card"}
+          {dl ? "Saving…" : "⬇ Save card — for IG, WeChat, 小红书"}
         </motion.button>
+        <p className="-mt-1 text-center text-xs text-ink/45">
+          Saves the image, then post it to any app
+        </p>
 
         {note && <p className="text-center text-sm font-medium text-teal">{note}</p>}
 
