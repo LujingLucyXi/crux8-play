@@ -28,7 +28,7 @@ export const questions: Question[] = [
     answers: [
       { id: "A", label: { en: "Immediately try again.", zh: "立刻再来一次。" }, scores: { power: 2, stoke: 2 } },
       { id: "B", label: { en: "Study the beta before the next go.", zh: "先研究一下 beta 再上。" }, scores: { beta: 3 } },
-      { id: "C", label: { en: "Swap into stickier shoes and adjust.", zh: "换双更粘的鞋，调整一下。" }, scores: { beta: 1, adventure: 1 } },
+      { id: "C", label: { en: "Brush the holds like crazy, soak my hands in chalk, try again.", zh: "疯狂刷点，把手泡进镁粉，再来一次。" }, scores: { beta: 2 } },
       { id: "D", label: { en: "Take a break and talk it out.", zh: "歇一下，边聊边分析。" }, scores: { social: 2, chill: 2 } },
     ],
   },
@@ -120,6 +120,26 @@ export const questions: Question[] = [
       { id: "B", label: { en: "Rock-solid and reliable — great catch, always on time.", zh: "稳当可靠 — 保护给力，从不迟到。" }, scores: { beta: 1, chill: 1, social: 1 } },
       { id: "C", label: { en: "Good vibes — turns any session into a proper hangout.", zh: "氛围感 — 把每次训练都变成聚会。" }, scores: { social: 2, stoke: 1 } },
       { id: "D", label: { en: "Down for anything — new crags, road trips, wild ideas.", zh: "什么都愿意试 — 新岩场、公路旅行、奇葩点子。" }, scores: { adventure: 2, stoke: 1 } },
+    ],
+  },
+  {
+    id: "q15",
+    prompt: { en: "You feel the best when…", zh: "你最爽的时刻是…" },
+    answers: [
+      { id: "A", label: { en: "A stranger praises your send.", zh: "陌生人夸你的完成。" }, scores: { social: 1, stoke: 2 } },
+      { id: "B", label: { en: "You bump into an old climbing friend.", zh: "偶遇一位老岩友。" }, scores: { social: 3 } },
+      { id: "C", label: { en: "You finally send a long-time project.", zh: "终于磕下磕了很久的项目。" }, scores: { power: 1, beta: 2 } },
+      { id: "D", label: { en: "You break in shiny new gear / shoes.", zh: "开箱全新的装备 / 岩鞋。" }, scores: { adventure: 1, beta: 1, stoke: 1 } },
+    ],
+  },
+  {
+    id: "q16",
+    prompt: { en: "Your biggest disappointment is…", zh: "最让你失落的是…" },
+    answers: [
+      { id: "A", label: { en: "Your gym crush cancels their membership.", zh: "你在岩馆的暗恋对象退卡了。" }, scores: { social: 2, stoke: 1 } },
+      { id: "B", label: { en: "You flashed a new line but forgot to film it.", zh: "flash 了新线，却忘了录像。" }, scores: { social: 1, stoke: 2 } },
+      { id: "C", label: { en: "The gym closes right as you're about to send.", zh: "眼看就要完成，岩馆关门了。" }, scores: { power: 2, stoke: 1 } },
+      { id: "D", label: { en: "Your climbing buddy stands you up.", zh: "约好的搭子放你鸽子。" }, scores: { social: 2, chill: 1 } },
     ],
   },
 ];
