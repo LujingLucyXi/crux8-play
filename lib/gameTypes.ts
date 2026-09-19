@@ -1,42 +1,52 @@
 // Reusable game-engine contract. Every game under /games implements this shape,
 // so the core engine (components/GameEngine.tsx) can render any of them.
 
+export type Lang = "en" | "zh";
+
+// A localized string: English + Chinese.
+export interface Loc {
+  en: string;
+  zh: string;
+}
+
+export function L(loc: Loc, lang: Lang): string {
+  return loc[lang] ?? loc.en;
+}
+
 export type DimensionKey = string;
 
 export interface DimensionMeta {
   key: DimensionKey;
-  label: string; // "POWER"
+  label: Loc; // "POWER" / "力量"
   emoji: string;
 }
 
 export interface Answer {
   id: string; // "A" | "B" | ...
-  label: string;
-  // points contributed to each personality dimension
+  label: Loc;
   scores: Partial<Record<DimensionKey, number>>;
 }
 
 export interface Question {
   id: string;
-  prompt: string;
+  prompt: Loc;
   answers: Answer[];
 }
 
 export interface ResultType {
   id: string;
-  name: string; // "THE SEND MACHINE"
+  name: Loc; // "THE SEND MACHINE" / "冲线狂魔"
   emoji: string;
-  tagline: string; // primary copy
-  secondary?: string; // fun/jokable line
-  accent: string; // hex used for gradients
-  // signature DNA vector (0-1 weight per dimension) used for matching
+  tagline: Loc;
+  secondary?: Loc;
+  accent: string;
   signature: Partial<Record<DimensionKey, number>>;
 }
 
 // A single player's computed DNA bar (0-100).
 export interface DnaScore {
   key: DimensionKey;
-  label: string;
+  label: Loc;
   emoji: string;
   value: number;
 }
@@ -44,16 +54,15 @@ export interface DnaScore {
 export interface ScoreResult {
   resultId: string;
   totals: Record<DimensionKey, number>;
-  dna: DnaScore[]; // player's own 0-100 breakdown, in dimension order
+  dna: DnaScore[];
 }
 
 export interface GameDefinition {
   id: string;
-  title: string;
-  subtitle?: string;
+  title: Loc;
+  subtitle?: Loc;
   dimensions: DimensionMeta[];
   questions: Question[];
   results: ResultType[];
-  // deterministic scoring: given answers (per question index) + seed -> result
   score: (answerIds: string[], seed: number) => ScoreResult;
 }

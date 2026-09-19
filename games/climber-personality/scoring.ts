@@ -46,7 +46,7 @@ export function scoreClimber(answerIds: string[], seed: number): ScoreResult {
   // Normalized 0-100 DNA bars, in display order.
   const dna = DIMENSIONS.map((d) => ({
     key: d.key,
-    label: d.label,
+    label: d.label, // localized {en, zh}
     emoji: d.emoji,
     value: MAX_PER_DIM[d.key]
       ? Math.round((totals[d.key] / MAX_PER_DIM[d.key]) * 100)

@@ -1,20 +1,45 @@
 "use client";
 
 import { motion } from "framer-motion";
+import type { GameDefinition, Lang } from "@/lib/gameTypes";
+import { L } from "@/lib/gameTypes";
+import { tr } from "@/lib/i18n";
 import BackgroundFX from "./BackgroundFX";
 
 export default function Landing({
-  subtitle,
+  game,
+  lang,
+  onLang,
   playCount,
   onStart,
 }: {
-  subtitle?: string;
+  game: GameDefinition;
+  lang: Lang;
+  onLang: (l: Lang) => void;
   playCount: string;
   onStart: () => void;
 }) {
   return (
-    <div className="relative flex flex-1 flex-col items-center justify-between px-6 pb-10 pt-16 text-center">
+    <div className="relative flex flex-1 flex-col items-center justify-between px-6 pb-10 pt-6 text-center">
       <BackgroundFX />
+
+      {/* Language toggle */}
+      <div className="flex w-full justify-end">
+        <div className="inline-flex overflow-hidden rounded-full border border-ink/15 bg-white/70 text-sm font-semibold backdrop-blur">
+          {(["en", "zh"] as Lang[]).map((l) => (
+            <button
+              key={l}
+              onClick={() => onLang(l)}
+              className={`tap-target px-4 ${
+                lang === l ? "bg-ink text-white" : "text-ink/60"
+              }`}
+              aria-pressed={lang === l}
+            >
+              {l === "en" ? "EN" : "中文"}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -23,7 +48,9 @@ export default function Landing({
         className="flex flex-col items-center"
       >
         <div className="text-sm font-bold tracking-[0.4em] text-teal">CRUX8</div>
-        <div className="mt-1 text-xs font-semibold tracking-[0.5em] text-ink/40">PLAY</div>
+        <div className="mt-1 text-xs font-semibold tracking-[0.5em] text-ink/40">
+          {tr("play", lang)}
+        </div>
 
         <motion.div
           className="my-8 text-6xl"
@@ -35,16 +62,14 @@ export default function Landing({
         </motion.div>
 
         <h1 className="text-4xl font-bold leading-tight text-ink">
-          What Type of
+          {tr("heroLine1", lang)}
           <br />
-          Climber Are You?
+          {tr("heroLine2", lang)}
         </h1>
-        {subtitle && (
-          <p className="mt-3 text-lg font-medium text-teal">{subtitle}</p>
+        {game.subtitle && (
+          <p className="mt-3 text-lg font-medium text-teal">{L(game.subtitle, lang)}</p>
         )}
-        <p className="mt-4 max-w-xs text-base text-ink/60">
-          Find your climbing personality in 30 seconds.
-        </p>
+        <p className="mt-4 max-w-xs text-base text-ink/60">{tr("heroSub", lang)}</p>
       </motion.div>
 
       <motion.div
@@ -58,9 +83,9 @@ export default function Landing({
           onClick={onStart}
           className="tap-target w-full rounded-2xl bg-gradient-to-r from-gold to-coral py-5 text-xl font-bold text-white shadow-xl shadow-coral/25"
         >
-          START
+          {tr("start", lang)}
         </motion.button>
-        <p className="mt-4 text-sm text-ink/50">No sign-up. Just climbing.</p>
+        <p className="mt-4 text-sm text-ink/50">{tr("noSignup", lang)}</p>
         <p className="mt-6 text-sm font-semibold text-teal">{playCount}</p>
       </motion.div>
     </div>

@@ -2,7 +2,9 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import type { DnaScore, ResultType } from "@/lib/gameTypes";
+import type { DnaScore, Lang, ResultType } from "@/lib/gameTypes";
+import { L } from "@/lib/gameTypes";
+import { tr } from "@/lib/i18n";
 import StatBar from "./StatBar";
 import BackgroundFX from "./BackgroundFX";
 import EmailCapture from "./EmailCapture";
@@ -18,15 +20,14 @@ function readable(hex: string): string {
   const f = 0.52;
   return (
     "#" +
-    [r, g, b]
-      .map((v) => Math.round(v * f).toString(16).padStart(2, "0"))
-      .join("")
+    [r, g, b].map((v) => Math.round(v * f).toString(16).padStart(2, "0")).join("")
   );
 }
 
 export default function ResultScreen({
   result,
   dna,
+  lang,
   crux8Url,
   onShareClick,
   onShareSuccess,
@@ -36,7 +37,7 @@ export default function ResultScreen({
 }: {
   result: ResultType;
   dna: DnaScore[];
-  siteLabel: string;
+  lang: Lang;
   crux8Url: string;
   onShareClick: () => void;
   onShareSuccess: () => void;
@@ -47,18 +48,21 @@ export default function ResultScreen({
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
 
-  // Server-rendered PNG (reliable on every device — no html-to-image black cards).
+  // Server-rendered PNG (reliable on every device). Includes language.
   function cardUrl(): string {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
     const s = dna.map((d) => d.value).join(",");
-    return `${origin}/api/card?r=${encodeURIComponent(result.id)}&s=${s}`;
+    return `${origin}/api/card?r=${encodeURIComponent(result.id)}&s=${s}&l=${lang}`;
   }
 
   async function handleShare() {
     onShareClick();
     setBusy(true);
     setNote(null);
-    const shareText = `I'm ${result.name} on Crux8 Play 🧗 What's your Climber DNA?`;
+    const shareText =
+      lang === "zh"
+        ? `我在 Crux8 Play 的攀岩人格是「${L(result.name, "zh")}」🧗 你是哪种攀岩搭子？`
+        : `I'm ${L(result.name, "en")} on Crux8 Play 🧗 What's your Climber DNA?`;
     const nav = navigator as Navigator & { canShare?: (d?: ShareData) => boolean };
     try {
       const res = await fetch(cardUrl());
@@ -70,13 +74,11 @@ export default function ResultScreen({
         onShareSuccess();
         return;
       }
-      // No file-share support (most desktops) → download the PNG instead.
       downloadBlob(blob);
       onShareSuccess();
-      setNote("Saved your DNA card — post it anywhere 👀");
+      setNote(tr("savedShareNote", lang));
     } catch {
       setBusy(false);
-      // User cancelled the share sheet, or share failed — offer link share.
       if (navigator.share) {
         try {
           await navigator.share({ text: shareText, url: window.location.origin });
@@ -86,7 +88,7 @@ export default function ResultScreen({
           /* ignore */
         }
       }
-      setNote("Screenshot this screen to share your result 📸");
+      setNote(tr("screenshotNote", lang));
     }
   }
 
@@ -97,9 +99,8 @@ export default function ResultScreen({
       const blob = await res.blob();
       downloadBlob(blob);
       onShareSuccess();
-      setNote("Saved! Post it to IG story, WeChat Moments, 小红书 — anywhere 👀");
+      setNote(tr("savedNote", lang));
     } catch {
-      // Last-resort: open the image in a new tab to long-press/right-click save.
       window.open(cardUrl(), "_blank");
     }
   }
@@ -115,7 +116,6 @@ export default function ResultScreen({
     URL.revokeObjectURL(url);
   }
 
-  // Darken light accent colors so the archetype name stays readable on cream.
   const accentText = readable(result.accent);
 
   return (
@@ -128,7 +128,9 @@ export default function ResultScreen({
         transition={{ duration: 0.5 }}
         className="text-center"
       >
-        <p className="text-sm font-semibold tracking-[0.3em] text-ink/50">YOU ARE</p>
+        <p className="text-sm font-semibold tracking-[0.3em] text-ink/50">
+          {tr("youAre", lang)}
+        </p>
         <motion.div
           className="my-2 text-6xl"
           initial={{ scale: 0 }}
@@ -138,25 +140,25 @@ export default function ResultScreen({
           {result.emoji}
         </motion.div>
         <h1 className="text-3xl font-bold leading-tight" style={{ color: accentText }}>
-          {result.name}
+          {L(result.name, lang)}
         </h1>
         <p className="mx-auto mt-2 max-w-xs text-lg font-semibold text-ink">
-          “{result.tagline}”
+          “{L(result.tagline, lang)}”
         </p>
         {result.secondary && (
-          <p className="mt-2 text-sm text-ink/60">{result.secondary}</p>
+          <p className="mt-2 text-sm text-ink/60">{L(result.secondary, lang)}</p>
         )}
       </motion.div>
 
       <div className="mt-6">
         <p className="mb-3 text-center text-sm font-semibold tracking-[0.2em] text-ink/50">
-          YOUR CLIMBER DNA 🧬
+          {tr("yourDna", lang)}
         </p>
         <div className="flex flex-col gap-3 rounded-3xl bg-white p-5 shadow-lg shadow-ink/5 ring-1 ring-ink/5">
           {dna.map((s, i) => (
             <StatBar
               key={s.key}
-              label={`${s.emoji} ${s.label}`}
+              label={`${s.emoji} ${L(s.label, lang)}`}
               value={s.value}
               delay={0.3 + i * 0.12}
             />
@@ -164,9 +166,7 @@ export default function ResultScreen({
         </div>
       </div>
 
-      <p className="mt-6 text-center text-sm text-ink/60">
-        Send this to your climbing partner 👀
-      </p>
+      <p className="mt-6 text-center text-sm text-ink/60">{tr("sendToPartner", lang)}</p>
 
       <div className="mt-3 flex flex-col gap-3">
         <motion.button
@@ -175,34 +175,26 @@ export default function ResultScreen({
           disabled={busy}
           className="tap-target w-full rounded-2xl bg-gradient-to-r from-gold to-coral py-4 text-lg font-bold text-white shadow-lg shadow-coral/25 disabled:opacity-70"
         >
-          {busy ? "Building DNA card…" : "SHARE MY CLIMBER DNA"}
+          {busy ? tr("building", lang) : tr("share", lang)}
         </motion.button>
-        <p className="-mt-1 text-center text-xs text-ink/45">
-          Opens your phone&apos;s share sheet (Messages, AirDrop…)
-        </p>
+        <p className="-mt-1 text-center text-xs text-ink/45">{tr("shareHint", lang)}</p>
 
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={handleDownload}
           className="tap-target w-full rounded-2xl border-2 border-ink/15 bg-white py-3.5 text-base font-bold text-ink"
         >
-          ⬇ Save card — for IG, WeChat, 小红书
+          {tr("save", lang)}
         </motion.button>
-        <p className="-mt-1 text-center text-xs text-ink/45">
-          Saves the image, then post it to any app
-        </p>
+        <p className="-mt-1 text-center text-xs text-ink/45">{tr("saveHint", lang)}</p>
 
         {note && <p className="text-center text-sm font-medium text-teal">{note}</p>}
 
-        <EmailCapture onSubmit={onWaitlist} />
+        <EmailCapture lang={lang} onSubmit={onWaitlist} />
 
         <div className="rounded-2xl border border-teal/30 bg-teal/10 p-4 text-center">
-          <p className="text-base font-semibold text-ink">
-            Join the Crux8 app waitlist
-          </p>
-          <p className="mt-1 text-sm text-ink/60">
-            Promos, buddies, and good vibes coming your way.
-          </p>
+          <p className="text-base font-semibold text-ink">{tr("ctaTitle", lang)}</p>
+          <p className="mt-1 text-sm text-ink/60">{tr("ctaSub", lang)}</p>
           <motion.a
             whileTap={{ scale: 0.97 }}
             href={crux8Url}
@@ -211,7 +203,7 @@ export default function ResultScreen({
             onClick={onCta}
             className="tap-target mt-3 inline-flex w-full items-center justify-center rounded-xl bg-tealdeep py-3 text-base font-bold text-white"
           >
-            Follow Crux8 Climbing →
+            {tr("ctaButton", lang)}
           </motion.a>
         </div>
 
@@ -219,7 +211,7 @@ export default function ResultScreen({
           onClick={onPlayAgain}
           className="tap-target w-full rounded-2xl py-3 text-base font-medium text-ink/50 hover:text-ink"
         >
-          Play again
+          {tr("playAgain", lang)}
         </button>
       </div>
     </div>

@@ -6,8 +6,8 @@ import { scoreClimber } from "./scoring";
 
 export const climberPersonality: GameDefinition = {
   id: "climber-personality",
-  title: "What Type of Climber Are You?",
-  subtitle: "你是哪种攀岩搭子？",
+  title: { en: "What Type of Climber Are You?", zh: "你是哪种攀岩搭子？" },
+  subtitle: { en: "你是哪种攀岩搭子？", zh: "What Type of Climber Are You?" },
   dimensions: DIMENSIONS,
   questions,
   results,

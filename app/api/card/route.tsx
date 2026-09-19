@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { results } from "@/games/climber-personality/results";
 import { DIMENSIONS } from "@/games/climber-personality/dimensions";
+import { L, type Lang } from "@/lib/gameTypes";
 
 export const runtime = "edge";
 
@@ -11,15 +12,17 @@ export const runtime = "edge";
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const r = searchParams.get("r") || results[0].id;
+  const lang: Lang = searchParams.get("l") === "zh" ? "zh" : "en";
   const s = (searchParams.get("s") || "")
     .split(",")
     .map((n) => Math.max(0, Math.min(100, parseInt(n, 10) || 0)));
   const result = results.find((x) => x.id === r) || results[0];
   const dna = DIMENSIONS.map((d, i) => ({
-    label: d.label,
+    label: L(d.label, lang),
     emoji: d.emoji,
     value: s[i] ?? 0,
   }));
+  const heading = lang === "zh" ? "我的攀岩 DNA 🧬" : "MY CLIMBER DNA 🧬";
   const accent = result.accent === "#0F2D3A" ? "#C7D9EB" : result.accent;
   const siteLabel = (process.env.NEXT_PUBLIC_SITE_URL || "crux8-play.vercel.app").replace(
     /^https?:\/\//,
@@ -46,17 +49,17 @@ export async function GET(req: Request) {
             CRUX8 PLAY
           </div>
           <div style={{ display: "flex", fontSize: 46, fontWeight: 600, marginTop: 40, color: "#C7D9EB" }}>
-            MY CLIMBER DNA 🧬
+            {heading}
           </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
           <div style={{ display: "flex", fontSize: 200, lineHeight: 1 }}>{result.emoji}</div>
           <div style={{ display: "flex", fontSize: 88, fontWeight: 800, marginTop: 24, color: accent, lineHeight: 1.05 }}>
-            {result.name}
+            {L(result.name, lang)}
           </div>
           <div style={{ display: "flex", fontSize: 44, fontWeight: 500, marginTop: 30, maxWidth: 860, textAlign: "center" }}>
-            “{result.tagline}”
+            “{L(result.tagline, lang)}”
           </div>
         </div>
 

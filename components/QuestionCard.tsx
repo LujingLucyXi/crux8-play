@@ -2,15 +2,18 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import type { Question } from "@/lib/gameTypes";
+import type { Lang, Question } from "@/lib/gameTypes";
+import { L } from "@/lib/gameTypes";
 
 const LETTERS = ["A", "B", "C", "D"];
 
 export default function QuestionCard({
   question,
+  lang,
   onAnswer,
 }: {
   question: Question;
+  lang: Lang;
   onAnswer: (answerId: string) => void;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
@@ -32,7 +35,7 @@ export default function QuestionCard({
       className="flex flex-1 flex-col"
     >
       <div className="rounded-3xl bg-white p-6 shadow-lg shadow-ink/5 ring-1 ring-ink/5">
-        <h2 className="text-2xl font-bold leading-snug text-ink">{question.prompt}</h2>
+        <h2 className="text-2xl font-bold leading-snug text-ink">{L(question.prompt, lang)}</h2>
       </div>
 
       <div className="mt-5 flex flex-col gap-3">
@@ -62,7 +65,7 @@ export default function QuestionCard({
               >
                 {isSel ? "✓" : LETTERS[i]}
               </span>
-              <span className="text-base font-medium text-ink">{a.label}</span>
+              <span className="text-base font-medium text-ink">{L(a.label, lang)}</span>
             </motion.button>
           );
         })}

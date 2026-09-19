@@ -2,7 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { DnaScore, GameDefinition, ResultType } from "@/lib/gameTypes";
+import type { DnaScore, GameDefinition, Lang, ResultType } from "@/lib/gameTypes";
+import { tr } from "@/lib/i18n";
 import {
   getPlayCount,
   recordSessionStart,
@@ -23,15 +24,11 @@ import BackgroundFX from "./BackgroundFX";
 
 type Phase = "landing" | "playing" | "calculating" | "result";
 
-// Seed baseline so the counter never reads as a fabricated exact headcount.
-const SEED_COUNT = 1284;
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://crux8-play.vercel.app";
 const crux8Url = process.env.NEXT_PUBLIC_CRUX8_URL || "https://crux8.com";
-const siteLabel = siteUrl.replace(/^https?:\/\//, "");
 
 export default function GameEngine({ game }: { game: GameDefinition }) {
   const [phase, setPhase] = useState<Phase>("landing");
+  const [lang, setLang] = useState<Lang>("en");
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [result, setResult] = useState<ResultType | null>(null);
@@ -46,15 +43,18 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
     initAnalytics();
     track("page_view");
     getPlayCount().then((c) => setLiveCount(c));
+    // Default to Chinese for zh browsers.
+    if (typeof navigator !== "undefined" && /^zh/i.test(navigator.language || "")) {
+      setLang("zh");
+    }
   }, []);
 
   const playCountLabel = useMemo(() => {
     if (liveCount && liveCount > 0) {
-      return `🔥 ${liveCount.toLocaleString()} climbers played`;
+      return `🔥 ${liveCount.toLocaleString()} ${tr("playedCount", lang)}`;
     }
-    // No real data yet — invite rather than fabricate a headcount.
-    return "Join the Crux8 climbing community";
-  }, [liveCount]);
+    return tr("joinCommunity", lang);
+  }, [liveCount, lang]);
 
   function handleStart() {
     const sid = makeSessionId();
@@ -65,7 +65,7 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
     setIndex(0);
     setResult(null);
     setPhase("playing");
-    track("game_started", { session_id: sid });
+    track("game_started", { session_id: sid, lang });
     recordSessionStart({
       id: sid,
       game_id: game.id,
@@ -109,12 +109,16 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
     }, 1900);
   }
 
+  const calcLines = tr("calculating", lang).split("\n");
+
   return (
     <AnimatePresence mode="wait">
       {phase === "landing" && (
         <Landing
           key="landing"
-          subtitle={game.subtitle}
+          game={game}
+          lang={lang}
+          onLang={setLang}
           playCount={playCountLabel}
           onStart={handleStart}
         />
@@ -130,6 +134,7 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
             <QuestionCard
               key={game.questions[index].id}
               question={game.questions[index]}
+              lang={lang}
               onAnswer={handleAnswer}
             />
           </AnimatePresence>
@@ -153,9 +158,12 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
             🧬
           </motion.div>
           <p className="mt-6 text-lg font-semibold tracking-[0.2em] text-teal">
-            CALCULATING YOUR
-            <br />
-            CLIMBING DNA…
+            {calcLines.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < calcLines.length - 1 && <br />}
+              </span>
+            ))}
           </p>
         </motion.div>
       )}
@@ -165,7 +173,7 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
           <ResultScreen
             result={result}
             dna={dna}
-            siteLabel={siteLabel}
+            lang={lang}
             crux8Url={crux8Url}
             onShareClick={() =>
               track("share_clicked", {
@@ -196,7 +204,6 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
                 session_id: sessionRef.current,
                 result_type: result.id,
               });
-              // Store email + DNA so the future app can restore this result.
               return saveWaitlist({
                 email,
                 session_id: sessionRef.current,
