@@ -14,10 +14,10 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://crux8-play.vercel.a
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "What Type of Climber Are You? | Crux8",
-  description: "Find your climbing personality in 30 seconds. No sign-up. Just climbing.",
+  description: "Find your climbing personality in 60 seconds. No sign-up. Just climbing.",
   openGraph: {
     title: "What Type of Climber Are You? | Crux8",
-    description: "Find your climbing personality in 30 seconds.",
+    description: "Find your climbing personality in 60 seconds.",
     url: siteUrl,
     siteName: "Crux8 Play",
     type: "website",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "What Type of Climber Are You? | Crux8",
-    description: "Find your climbing personality in 30 seconds.",
+    description: "Find your climbing personality in 60 seconds.",
   },
 };
 

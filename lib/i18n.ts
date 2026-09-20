@@ -5,7 +5,7 @@ export const UI = {
   play: { en: "PLAY", zh: "玩一玩" },
   heroLine1: { en: "What Type of", zh: "你是哪种" },
   heroLine2: { en: "Climber Are You?", zh: "攀岩搭子？" },
-  heroSub: { en: "Find your climbing personality in 30 seconds.", zh: "30 秒测出你的攀岩人格。" },
+  heroSub: { en: "Find your climbing personality in 60 seconds.", zh: "60 秒测出你的攀岩人格。" },
   start: { en: "START", zh: "开始测试" },
   noSignup: { en: "No sign-up. Just climbing.", zh: "免注册 · 纯攀岩" },
   joinCommunity: { en: "Join the Crux8 climbing community", zh: "加入 Crux8 攀岩社区" },

@@ -24,7 +24,6 @@ import BackgroundFX from "./BackgroundFX";
 
 type Phase = "landing" | "playing" | "calculating" | "result";
 
-const crux8Url = process.env.NEXT_PUBLIC_CRUX8_URL || "https://crux8.com";
 
 export default function GameEngine({ game }: { game: GameDefinition }) {
   const [phase, setPhase] = useState<Phase>("landing");
@@ -194,7 +193,6 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
             result={result}
             dna={dna}
             lang={lang}
-            crux8Url={crux8Url}
             onShareClick={() =>
               track("share_clicked", {
                 session_id: sessionRef.current,
@@ -207,13 +205,6 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
                 result_type: result.id,
               });
               updateSession(sessionRef.current, { share_clicked: true });
-            }}
-            onCta={() => {
-              track("crux8_cta_clicked", {
-                session_id: sessionRef.current,
-                result_type: result.id,
-              });
-              updateSession(sessionRef.current, { crux8_clicked: true });
             }}
             onPlayAgain={() => {
               track("play_again", { session_id: sessionRef.current });

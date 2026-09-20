@@ -38,7 +38,7 @@ export default function OG() {
           <span>Climber Are You? 🧗</span>
         </div>
         <div style={{ display: "flex", fontSize: 36, marginTop: 30, color: "#C7D9EB" }}>
-          Find your climbing personality in 30 seconds.
+          Find your climbing personality in 60 seconds.
         </div>
       </div>
     ),

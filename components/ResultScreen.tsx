@@ -28,20 +28,16 @@ export default function ResultScreen({
   result,
   dna,
   lang,
-  crux8Url,
   onShareClick,
   onShareSuccess,
-  onCta,
   onPlayAgain,
   onWaitlist,
 }: {
   result: ResultType;
   dna: DnaScore[];
   lang: Lang;
-  crux8Url: string;
   onShareClick: () => void;
   onShareSuccess: () => void;
-  onCta: () => void;
   onPlayAgain: () => void;
   onWaitlist: (email: string) => Promise<boolean>;
 }) {
@@ -191,21 +187,6 @@ export default function ResultScreen({
         {note && <p className="text-center text-sm font-medium text-teal">{note}</p>}
 
         <EmailCapture lang={lang} onSubmit={onWaitlist} />
-
-        <div className="rounded-2xl border border-teal/30 bg-teal/10 p-4 text-center">
-          <p className="text-base font-semibold text-ink">{tr("ctaTitle", lang)}</p>
-          <p className="mt-1 text-sm text-ink/60">{tr("ctaSub", lang)}</p>
-          <motion.a
-            whileTap={{ scale: 0.97 }}
-            href={crux8Url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={onCta}
-            className="tap-target mt-3 inline-flex w-full items-center justify-center rounded-xl bg-tealdeep py-3 text-base font-bold text-white"
-          >
-            {tr("ctaButton", lang)}
-          </motion.a>
-        </div>
 
         <button
           onClick={onPlayAgain}

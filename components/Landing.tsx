@@ -66,7 +66,7 @@ export default function Landing({
           <br />
           {tr("heroLine2", lang)}
         </h1>
-        {game.subtitle && (
+        {game.subtitle && L(game.subtitle, lang) && (
           <p className="mt-3 text-lg font-medium text-teal">{L(game.subtitle, lang)}</p>
         )}
         <p className="mt-4 max-w-xs text-base text-ink/60">{tr("heroSub", lang)}</p>
