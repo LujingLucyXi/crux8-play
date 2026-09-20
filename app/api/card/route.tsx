@@ -5,6 +5,52 @@ import { L, type Lang } from "@/lib/gameTypes";
 
 export const runtime = "edge";
 
+function darken(hex: string, f = 0.55): string {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return (
+    "#" +
+    [r, g, b].map((v) => Math.round(v * f).toString(16).padStart(2, "0")).join("")
+  );
+}
+
+function burstPath(cx: number, cy: number, spikes: number, outer: number, inner: number): string {
+  const pts: string[] = [];
+  for (let i = 0; i < spikes * 2; i++) {
+    const isOuter = i % 2 === 0;
+    const wobble = isOuter ? 1 + (i % 3) * 0.04 : 1 - (i % 2) * 0.05;
+    const r = (isOuter ? outer : inner) * wobble;
+    const a = (Math.PI / spikes) * i - Math.PI / 2;
+    pts.push(`${(cx + Math.cos(a) * r).toFixed(1)},${(cy + Math.sin(a) * r).toFixed(1)}`);
+  }
+  return `M${pts.join("L")}Z`;
+}
+
+function stickerSvg(accent: string, ink: string): string {
+  const c = 100;
+  return (
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">` +
+    `<defs><radialGradient id="g" cx="34%" cy="28%" r="75%">` +
+    `<stop offset="0%" stop-color="rgba(255,255,255,0.85)"/>` +
+    `<stop offset="55%" stop-color="${accent}"/>` +
+    `<stop offset="100%" stop-color="${ink}"/></radialGradient>` +
+    `<pattern id="d" width="12" height="12" patternUnits="userSpaceOnUse">` +
+    `<circle cx="3" cy="3" r="1.6" fill="rgba(255,255,255,0.35)"/></pattern></defs>` +
+    `<g transform="rotate(-6 100 100)">` +
+    `<path d="${burstPath(c, c, 16, 96, 66)}" fill="${accent}" stroke="${ink}" stroke-width="4" stroke-linejoin="round"/>` +
+    `<circle cx="100" cy="100" r="58" fill="#ffffff" stroke="${ink}" stroke-width="3"/>` +
+    `<circle cx="100" cy="100" r="49" fill="url(#g)" stroke="${ink}" stroke-width="2"/>` +
+    `<circle cx="100" cy="100" r="49" fill="url(#d)"/>` +
+    `<g stroke="${ink}" stroke-width="3.5" stroke-linecap="round" fill="none">` +
+    `<path d="M172 40 l0 14 M165 47 l14 0"/>` +
+    `<path d="M30 150 l0 12 M24 156 l12 0"/>` +
+    `<path d="M40 44 l7 7 M47 44 l-7 7" opacity="0.8"/>` +
+    `<path d="M162 158 q8 -4 14 2" opacity="0.7"/></g></g></svg>`
+  );
+}
+
 // Server-rendered 1080x1920 "Climber DNA" share card.
 // Reliable on every device (unlike client-side html-to-image, which can
 // produce black/blank images on mobile Safari).
@@ -24,6 +70,12 @@ export async function GET(req: Request) {
   }));
   const heading = lang === "zh" ? "我的攀岩 DNA 🧬" : "MY CLIMBER DNA 🧬";
   const accent = result.accent === "#0F2D3A" ? "#C7D9EB" : result.accent;
+
+  // Hand-drawn "die-cut sticker" badge, rendered as an SVG data-URI so it
+  // survives Satori reliably. Spiky wobbly sunburst + white die-cut ring.
+  const ink = darken(result.accent);
+  const badgeSvg = stickerSvg(result.accent, ink);
+  const badgeUri = `data:image/svg+xml;utf8,${encodeURIComponent(badgeSvg)}`;
   const siteLabel = (process.env.NEXT_PUBLIC_SITE_URL || "crux8-play.vercel.app").replace(
     /^https?:\/\//,
     ""
@@ -58,40 +110,23 @@ export async function GET(req: Request) {
             style={{
               display: "flex",
               position: "relative",
-              width: 340,
-              height: 340,
+              width: 360,
+              height: 360,
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            {Array.from({ length: 12 }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  position: "absolute",
-                  width: 42,
-                  height: 16,
-                  borderRadius: 999,
-                  background: result.accent,
-                  opacity: 0.5,
-                  transform: `rotate(${i * 30}deg) translateX(158px)`,
-                }}
-              />
-            ))}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={badgeUri} width={360} height={360} alt="" style={{ position: "absolute" }} />
             <div
               style={{
                 display: "flex",
-                width: 250,
-                height: 250,
-                borderRadius: 9999,
-                alignItems: "center",
-                justifyContent: "center",
-                background: `linear-gradient(145deg, rgba(255,255,255,0.6), ${result.accent})`,
-                border: "12px solid #ffffff",
-                boxShadow: `0 24px 70px ${result.accent}66`,
+                fontSize: 140,
+                lineHeight: 1,
+                transform: "rotate(0deg)",
               }}
             >
-              <div style={{ display: "flex", fontSize: 150, lineHeight: 1 }}>{result.emoji}</div>
+              {result.emoji}
             </div>
           </div>
           <div style={{ display: "flex", fontSize: 88, fontWeight: 800, marginTop: 24, color: accent, lineHeight: 1.05 }}>

@@ -85,7 +85,6 @@ export default function Landing({
         >
           {tr("start", lang)}
         </motion.button>
-        <p className="mt-4 text-sm text-ink/50">{tr("noSignup", lang)}</p>
         <p className="mt-6 text-sm font-semibold text-teal">{playCount}</p>
       </motion.div>
     </div>
