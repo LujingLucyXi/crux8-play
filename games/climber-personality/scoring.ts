@@ -50,7 +50,7 @@ const BONUS: Record<string, number> = {
   sensei: -0.015,
   chiller: 0.035,
   competitor: 0.01,
-  "flex-lord": 0.04,
+  "flex-lord": 0.025,
   heartbreaker: 0.015,
 };
 
