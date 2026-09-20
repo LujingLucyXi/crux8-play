@@ -8,6 +8,7 @@ import { tr } from "@/lib/i18n";
 import StatBar from "./StatBar";
 import BackgroundFX from "./BackgroundFX";
 import EmailCapture from "./EmailCapture";
+import Emblem from "./Emblem";
 
 // Darkens a hex color if it's too light to read on the cream background.
 function readable(hex: string): string {
@@ -153,12 +154,12 @@ export default function ResultScreen({
           {tr("youAre", lang)}
         </p>
         <motion.div
-          className="my-2 text-6xl"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
+          className="my-3"
+          initial={{ scale: 0, rotate: -12 }}
+          animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.15 }}
         >
-          {result.emoji}
+          <Emblem emoji={result.emoji} accent={result.accent} />
         </motion.div>
         <h1 className="text-3xl font-bold leading-tight" style={{ color: accentText }}>
           {L(result.name, lang)}

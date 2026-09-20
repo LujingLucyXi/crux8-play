@@ -54,7 +54,46 @@ export async function GET(req: Request) {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-          <div style={{ display: "flex", fontSize: 200, lineHeight: 1 }}>{result.emoji}</div>
+          <div
+            style={{
+              display: "flex",
+              position: "relative",
+              width: 340,
+              height: 340,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  position: "absolute",
+                  width: 42,
+                  height: 16,
+                  borderRadius: 999,
+                  background: result.accent,
+                  opacity: 0.5,
+                  transform: `rotate(${i * 30}deg) translateX(158px)`,
+                }}
+              />
+            ))}
+            <div
+              style={{
+                display: "flex",
+                width: 250,
+                height: 250,
+                borderRadius: 9999,
+                alignItems: "center",
+                justifyContent: "center",
+                background: `linear-gradient(145deg, rgba(255,255,255,0.6), ${result.accent})`,
+                border: "12px solid #ffffff",
+                boxShadow: `0 24px 70px ${result.accent}66`,
+              }}
+            >
+              <div style={{ display: "flex", fontSize: 150, lineHeight: 1 }}>{result.emoji}</div>
+            </div>
+          </div>
           <div style={{ display: "flex", fontSize: 88, fontWeight: 800, marginTop: 24, color: accent, lineHeight: 1.05 }}>
             {L(result.name, lang)}
           </div>
