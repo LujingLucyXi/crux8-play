@@ -26,11 +26,11 @@ export const UI = {
   screenshotNote: { en: "Screenshot this screen to share your result 📸", zh: "截图这个页面来分享结果 📸" },
   playAgain: { en: "Play again", zh: "再玩一次" },
 
-  ctaTitle: { en: "Join the Crux8 app waitlist", zh: "加入 Crux8 App 候补名单" },
+  ctaTitle: { en: "Join the Crux8 app waitlist", zh: "最酷的攀岩社交 App，敬请期待 ✨" },
   ctaSub: { en: "Promos, buddies, and good vibes coming your way.", zh: "优惠、搭子和好心情，马上安排。" },
   ctaButton: { en: "Follow Crux8 Climbing →", zh: "关注 Crux8 Climbing →" },
 
-  emailTitle: { en: "🎟️ Join the Crux8 app waitlist", zh: "🎟️ 加入 Crux8 App 候补名单" },
+  emailTitle: { en: "🎟️ Join the Crux8 app waitlist", zh: "🎟️ 抢先加入 waitlist · 最酷的攀岩社交 App" },
   emailSub: { en: "Find the perfect buddy for a session tonight or a group trip outdoors.", zh: "帮你找到今晚开练或周末出行的完美搭子。" },
   emailPerk: { en: "Promos, buddies & good vibes coming your way.", zh: "优惠、搭子和好心情，马上安排。" },
   emailPlaceholder: { en: "you@email.com", zh: "你的邮箱" },
