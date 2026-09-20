@@ -11,6 +11,7 @@ export const UI = {
   joinCommunity: { en: "Join the Crux8 climbing community", zh: "加入 Crux8 攀岩社区" },
   playedCount: { en: "climbers played", zh: "位岩友已参与" },
 
+  skip: { en: "🤷 None of these", zh: "🤷 都不太像我" },
   calculating: { en: "CALCULATING YOUR\nCLIMBING DNA…", zh: "正在计算你的\n攀岩 DNA…" },
   youAre: { en: "YOU ARE", zh: "你是" },
   yourDna: { en: "YOUR CLIMBER DNA 🧬", zh: "你的攀岩 DNA 🧬" },

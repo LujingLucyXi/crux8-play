@@ -31,6 +31,7 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
   const [lang, setLang] = useState<Lang>("en");
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
+  const [skipsUsed, setSkipsUsed] = useState(0);
   const [result, setResult] = useState<ResultType | null>(null);
   const [dna, setDna] = useState<DnaScore[]>([]);
   const [liveCount, setLiveCount] = useState<number | null>(null);
@@ -63,6 +64,7 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
     startedAtRef.current = new Date().toISOString();
     setAnswers([]);
     setIndex(0);
+    setSkipsUsed(0);
     setResult(null);
     setPhase("playing");
     track("game_started", { session_id: sid, lang });
@@ -83,6 +85,22 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
       answer_id: answerId,
     });
 
+    if (next.length >= game.questions.length) {
+      finish(next);
+    } else {
+      setIndex((i) => i + 1);
+    }
+  }
+
+  function handleSkip() {
+    setSkipsUsed((n) => n + 1);
+    const next = [...answers, "SKIP"];
+    setAnswers(next);
+    track("question_answered", {
+      session_id: sessionRef.current,
+      question_index: index + 1,
+      answer_id: "SKIP",
+    });
     if (next.length >= game.questions.length) {
       finish(next);
     } else {
@@ -135,6 +153,8 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
               key={game.questions[index].id}
               question={game.questions[index]}
               lang={lang}
+              canSkip={skipsUsed < 2}
+              onSkip={handleSkip}
               onAnswer={handleAnswer}
             />
           </AnimatePresence>

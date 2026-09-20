@@ -4,16 +4,21 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import type { Lang, Question } from "@/lib/gameTypes";
 import { L } from "@/lib/gameTypes";
+import { tr } from "@/lib/i18n";
 
 const LETTERS = ["A", "B", "C", "D"];
 
 export default function QuestionCard({
   question,
   lang,
+  canSkip,
+  onSkip,
   onAnswer,
 }: {
   question: Question;
   lang: Lang;
+  canSkip: boolean;
+  onSkip: () => void;
   onAnswer: (answerId: string) => void;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
@@ -70,6 +75,15 @@ export default function QuestionCard({
           );
         })}
       </div>
+
+      {canSkip && !selected && (
+        <button
+          onClick={onSkip}
+          className="tap-target mx-auto mt-4 text-sm font-medium text-ink/40 hover:text-ink/70"
+        >
+          {tr("skip", lang)}
+        </button>
+      )}
     </motion.div>
   );
 }
