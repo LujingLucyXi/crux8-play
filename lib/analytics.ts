@@ -16,7 +16,8 @@ export type AnalyticsEvent =
   | "share_success"
   | "play_again"
   | "crux8_cta_clicked"
-  | "waitlist_submitted";
+  | "waitlist_submitted"
+  | "invite_clicked";
 
 export function initAnalytics() {
   if (initialized || typeof window === "undefined") return;

@@ -206,6 +206,12 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
               });
               updateSession(sessionRef.current, { share_clicked: true });
             }}
+            onInvite={() =>
+              track("invite_clicked", {
+                session_id: sessionRef.current,
+                result_type: result.id,
+              })
+            }
             onPlayAgain={() => {
               track("play_again", { session_id: sessionRef.current });
               setPhase("landing");

@@ -30,6 +30,7 @@ export default function ResultScreen({
   lang,
   onShareClick,
   onShareSuccess,
+  onInvite,
   onPlayAgain,
   onWaitlist,
 }: {
@@ -38,6 +39,7 @@ export default function ResultScreen({
   lang: Lang;
   onShareClick: () => void;
   onShareSuccess: () => void;
+  onInvite: () => void;
   onPlayAgain: () => void;
   onWaitlist: (email: string) => Promise<boolean>;
 }) {
@@ -98,6 +100,29 @@ export default function ResultScreen({
       setNote(tr("savedNote", lang));
     } catch {
       window.open(cardUrl(), "_blank");
+    }
+  }
+
+  async function handleInvite() {
+    onInvite();
+    const url = typeof window !== "undefined" ? window.location.origin : "https://play.crux8.app";
+    const text =
+      lang === "zh"
+        ? "来测测你是哪种攀岩搭子 🧗 你的攀岩 DNA 是？"
+        : "What's your Climber DNA? 🧗 Take the Crux8 quiz:";
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Crux8 Play", text, url });
+        return;
+      } catch {
+        /* cancelled — fall through to copy */
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setNote(tr("inviteCopied", lang));
+    } catch {
+      setNote(url);
     }
   }
 
@@ -185,6 +210,14 @@ export default function ResultScreen({
         <p className="-mt-1 text-center text-xs text-ink/45">{tr("saveHint", lang)}</p>
 
         {note && <p className="text-center text-sm font-medium text-teal">{note}</p>}
+
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          onClick={handleInvite}
+          className="tap-target w-full rounded-2xl bg-tealdeep py-3.5 text-base font-bold text-white"
+        >
+          {tr("invite", lang)}
+        </motion.button>
 
         <EmailCapture lang={lang} onSubmit={onWaitlist} />
 
