@@ -12,7 +12,9 @@ const AFFINITY: Record<string, Partial<Record<string, number>>> = {
   "q2:B": { "project-slayer": 1 },
   "q4:D": { chiller: 1 },
   "q5:C": { "flex-lord": 2 },
+  "q7:A": { "flex-lord": 1 },
   "q7:B": { "beta-scientist": 1 },
+  "q8:A": { "flex-lord": 1 },
   "q8:B": { "zen-master": 1 },
   "q10:A": { "beta-scientist": 1 },
   "q11:A": { competitor: 2 },
@@ -48,7 +50,7 @@ const BONUS: Record<string, number> = {
   sensei: -0.015,
   chiller: 0.035,
   competitor: 0.01,
-  "flex-lord": 0.035,
+  "flex-lord": 0.06,
   heartbreaker: 0.015,
 };
 
