@@ -25,9 +25,10 @@ export async function GET(req: Request) {
   const heading = lang === "zh" ? "我的攀岩 DNA 🧬" : "MY CLIMBER DNA 🧬";
   const accent = result.accent === "#0F2D3A" ? "#C7D9EB" : result.accent;
 
-  // Golden medallion emblem, same file the client renders — fetched from
-  // the deployment's own public assets so it survives Satori reliably.
-  const badgeUri = new URL(`/emblems/${result.id}.webp`, req.url).toString();
+  // Golden medallion emblem, same art the client renders — PNG because the
+  // OG renderer (Satori) can't decode WebP. Fetched from the deployment's
+  // own public assets so it survives Satori reliably.
+  const badgeUri = new URL(`/emblems/${result.id}.png`, req.url).toString();
   const siteLabel = (process.env.NEXT_PUBLIC_SITE_URL || "crux8-play.vercel.app").replace(
     /^https?:\/\//,
     ""
