@@ -29,7 +29,7 @@ export async function GET(req: Request) {
   // OG renderer (Satori) can't decode WebP. Fetched from the deployment's
   // own public assets so it survives Satori reliably.
   const badgeUri = new URL(`/emblems/${result.id}.png`, req.url).toString();
-  const siteLabel = (process.env.NEXT_PUBLIC_SITE_URL || "crux8-play.vercel.app").replace(
+  const siteLabel = (process.env.NEXT_PUBLIC_SITE_URL || "play.crux8.app").replace(
     /^https?:\/\//,
     ""
   );
@@ -44,8 +44,8 @@ export async function GET(req: Request) {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "100px 90px",
-          background: `linear-gradient(160deg, #0F2D3A 0%, #0a2029 55%, ${result.accent}33 100%)`,
-          color: "#fff",
+          background: `linear-gradient(165deg, #070708 0%, #0e0c07 55%, #241a08 130%)`,
+          color: "#F5EFE0",
           fontFamily: "sans-serif",
         }}
       >
@@ -53,7 +53,7 @@ export async function GET(req: Request) {
           <div style={{ display: "flex", fontSize: 38, fontWeight: 700, letterSpacing: 16, color: "#F4B942" }}>
             CRUX8 PLAY
           </div>
-          <div style={{ display: "flex", fontSize: 46, fontWeight: 600, marginTop: 40, color: "#C7D9EB" }}>
+          <div style={{ display: "flex", fontSize: 46, fontWeight: 600, marginTop: 40, color: "#F5EFE0" }}>
             {heading}
           </div>
         </div>
@@ -89,20 +89,20 @@ export async function GET(req: Request) {
                 </div>
                 <div style={{ display: "flex" }}>{d.value}%</div>
               </div>
-              <div style={{ display: "flex", height: 24, width: "100%", background: "rgba(255,255,255,0.14)", borderRadius: 999 }}>
+              <div style={{ display: "flex", height: 24, width: "100%", background: "rgba(255,255,255,0.10)", borderRadius: 999 }}>
                 <div
                   style={{
                     display: "flex",
                     width: `${d.value}%`,
                     height: "100%",
                     borderRadius: 999,
-                    background: "linear-gradient(90deg,#2C7A7B,#F4B942,#FF6B6B)",
+                    background: "linear-gradient(90deg,#8a6a1f,#E8B83A,#F6D47C)",
                   }}
                 />
               </div>
             </div>
           ))}
-          <div style={{ display: "flex", justifyContent: "center", marginTop: 24, fontSize: 40, fontWeight: 600, color: "#C7D9EB" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: 24, fontSize: 40, fontWeight: 600, color: "#A68B3C" }}>
             {siteLabel}
           </div>
         </div>

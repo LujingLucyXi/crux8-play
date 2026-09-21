@@ -59,6 +59,14 @@ export default function ResultScreen({
     return `${origin}/api/card?r=${encodeURIComponent(result.id)}&s=${s}&l=${lang}`;
   }
 
+  // Personal share page: unfurls THIS card (medallion + DNA) in link previews.
+  function cardPageUrl(): string {
+    const origin =
+      typeof window !== "undefined" ? window.location.origin : "https://play.crux8.app";
+    const s = dna.map((d) => d.value).join(",");
+    return `${origin}/c/${encodeURIComponent(result.id)}?s=${s}&l=${lang}`;
+  }
+
   async function handleShare() {
     onShareClick();
     setBusy(true);
@@ -67,6 +75,7 @@ export default function ResultScreen({
       lang === "zh"
         ? `我在 Crux8 Play 的攀岩人格是「${L(result.name, "zh")}」🧗 你是哪种攀岩搭子？`
         : `I'm ${L(result.name, "en")} on Crux8 Play 🧗 What's your Climber DNA?`;
+    const pageUrl = cardPageUrl();
     const nav = navigator as Navigator & { canShare?: (d?: ShareData) => boolean };
     try {
       const res = await fetch(cardUrl());
@@ -74,7 +83,7 @@ export default function ResultScreen({
       const file = new File([blob], "crux8-climber-dna.png", { type: "image/png" });
       setBusy(false);
       if (nav.canShare && nav.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], text: shareText, title: "Crux8 Play" });
+        await navigator.share({ files: [file], text: `${shareText}\n${pageUrl}`, title: "Crux8 Play" });
         onShareSuccess();
         return;
       }
@@ -85,7 +94,7 @@ export default function ResultScreen({
       setBusy(false);
       if (navigator.share) {
         try {
-          await navigator.share({ text: shareText, url: window.location.origin });
+          await navigator.share({ text: shareText, url: pageUrl });
           onShareSuccess();
           return;
         } catch {
@@ -111,7 +120,7 @@ export default function ResultScreen({
 
   async function handleInvite() {
     onInvite();
-    const url = typeof window !== "undefined" ? window.location.origin : "https://play.crux8.app";
+    const url = cardPageUrl();
     const text =
       lang === "zh"
         ? "来测测你是哪种攀岩搭子 🧗 你的攀岩 DNA 是？"

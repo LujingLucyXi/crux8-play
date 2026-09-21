@@ -9,7 +9,7 @@ const poppins = Poppins({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://crux8-play.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://play.crux8.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FFF7EF",
+  themeColor: "#070708",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,

@@ -16,8 +16,8 @@ export default function OG() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          background: "linear-gradient(135deg,#0F2D3A 0%,#0a2029 60%,#2C7A7B 130%)",
-          color: "#fff",
+          background: "linear-gradient(135deg,#070708 0%,#0e0c07 60%,#241a08 130%)",
+          color: "#F5EFE0",
           fontFamily: "sans-serif",
         }}
       >
@@ -37,7 +37,7 @@ export default function OG() {
           <span>What Type of</span>
           <span>Climber Are You? 🧗</span>
         </div>
-        <div style={{ display: "flex", fontSize: 36, marginTop: 30, color: "#C7D9EB" }}>
+        <div style={{ display: "flex", fontSize: 36, marginTop: 30, color: "#A68B3C" }}>
           Find your climbing personality in 60 seconds.
         </div>
       </div>
