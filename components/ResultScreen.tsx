@@ -173,6 +173,16 @@ export default function ResultScreen({
   return (
     <div className="relative flex flex-1 flex-col px-6 pb-8 pt-8">
       <BackgroundFX />
+      {/* Corner shortcut: open the collection in a new tab. */}
+      <a
+        href="/collection"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={lang === "zh" ? "打开卡片收藏" : "Open card collection"}
+        className="fixed right-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-gold/50 bg-[#0B0B0D]/80 text-xl shadow-lg shadow-black/40 backdrop-blur transition hover:bg-gold/20"
+      >
+        🃏
+      </a>
 
       <p className="text-center text-sm font-semibold tracking-[0.3em] text-white/50">
         {flipped ? tr("youAre", lang) : tr("yourCard", lang)}
