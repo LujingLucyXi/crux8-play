@@ -159,7 +159,7 @@ export default function ResultScreen({
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.15 }}
         >
-          <Emblem emoji={result.emoji} accent={result.accent} />
+          <Emblem id={result.id} accent={result.accent} />
         </motion.div>
         <h1 className="text-3xl font-bold leading-tight" style={{ color: accentText }}>
           {L(result.name, lang)}
