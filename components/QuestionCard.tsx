@@ -39,7 +39,7 @@ export default function QuestionCard({
       transition={{ type: "spring", stiffness: 260, damping: 26 }}
       className="flex flex-1 flex-col"
     >
-      <h2 className="font-display text-[26px] font-bold leading-snug text-ink">
+      <h2 className="font-display text-[26px] font-bold leading-snug text-[#F5EFE0]">
         {L(question.prompt, lang)}
       </h2>
 
@@ -61,13 +61,13 @@ export default function QuestionCard({
               aria-pressed={isSel}
               className={`tap-target flex items-center gap-4 rounded-2xl px-5 py-4 text-left shadow-sm transition-colors ${
                 isSel
-                  ? "bg-white shadow-lg shadow-gold/30 ring-2 ring-gold"
-                  : "bg-white/85 ring-1 ring-ink/10 hover:ring-teal/50"
+                  ? "bg-gold/15 shadow-lg shadow-gold/20 ring-2 ring-gold"
+                  : "bg-white/[0.06] ring-1 ring-white/10 hover:ring-gold/50"
               }`}
             >
               <span
                 className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-                  isSel ? "bg-gold text-white" : "bg-ink/[0.07] text-teal"
+                  isSel ? "bg-gold text-[#1a1206]" : "bg-white/10 text-gold"
                 }`}
                 aria-hidden
               >
@@ -85,7 +85,7 @@ export default function QuestionCard({
                   <span className="h-2.5 w-2.5 rounded-full bg-current opacity-60" />
                 )}
               </span>
-              <span className="text-[17px] font-medium leading-snug text-ink">
+              <span className="text-[17px] font-medium leading-snug text-[#F5EFE0]">
                 {L(a.label, lang)}
               </span>
             </motion.button>
@@ -96,7 +96,7 @@ export default function QuestionCard({
       {canSkip && !selected && (
         <button
           onClick={onSkip}
-          className="tap-target mx-auto mt-5 text-sm font-medium text-ink/40 hover:text-ink/70"
+          className="tap-target mx-auto mt-5 text-sm font-medium text-white/40 hover:text-white/70"
         >
           {tr("skip", lang)}
         </button>

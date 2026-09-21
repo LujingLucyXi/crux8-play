@@ -2,7 +2,6 @@ import { ImageResponse } from "next/og";
 import { results } from "@/games/climber-personality/results";
 import { DIMENSIONS } from "@/games/climber-personality/dimensions";
 import { L, type Lang } from "@/lib/gameTypes";
-import { archetypeArtSvg } from "@/games/climber-personality/art";
 
 export const runtime = "edge";
 
@@ -26,11 +25,9 @@ export async function GET(req: Request) {
   const heading = lang === "zh" ? "我的攀岩 DNA 🧬" : "MY CLIMBER DNA 🧬";
   const accent = result.accent === "#0F2D3A" ? "#C7D9EB" : result.accent;
 
-  // Bespoke per-archetype illustration, rendered as an SVG data-URI so it
-  // survives Satori reliably and matches the on-screen art exactly.
-  const badgeUri = `data:image/svg+xml;utf8,${encodeURIComponent(
-    archetypeArtSvg(result.id, result.accent)
-  )}`;
+  // Golden medallion emblem, same file the client renders — fetched from
+  // the deployment's own public assets so it survives Satori reliably.
+  const badgeUri = new URL(`/emblems/${result.id}.webp`, req.url).toString();
   const siteLabel = (process.env.NEXT_PUBLIC_SITE_URL || "crux8-play.vercel.app").replace(
     /^https?:\/\//,
     ""
@@ -72,7 +69,7 @@ export async function GET(req: Request) {
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={badgeUri} width={360} height={360} alt="" />
+            <img src={badgeUri} width={360} height={360} alt="" style={{ borderRadius: "50%" }} />
           </div>
           <div style={{ display: "flex", fontSize: 88, fontWeight: 800, marginTop: 24, color: accent, lineHeight: 1.05 }}>
             {L(result.name, lang)}

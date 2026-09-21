@@ -30,13 +30,13 @@ export default function Landing({
 
       {/* Language toggle */}
       <div className="flex w-full justify-end">
-        <div className="inline-flex overflow-hidden rounded-full border border-ink/15 bg-white/70 text-sm font-semibold backdrop-blur">
+        <div className="inline-flex overflow-hidden rounded-full border border-white/15 bg-white/5 text-sm font-semibold backdrop-blur">
           {(["en", "zh"] as Lang[]).map((l) => (
             <button
               key={l}
               onClick={() => onLang(l)}
               className={`tap-target px-4 ${
-                lang === l ? "bg-ink text-white" : "text-ink/60"
+                lang === l ? "bg-gold text-[#1a1206]" : "text-white/60"
               }`}
               aria-pressed={lang === l}
             >
@@ -52,8 +52,8 @@ export default function Landing({
         transition={{ duration: 0.5 }}
         className="flex w-full flex-col items-center"
       >
-        <div className="text-sm font-bold tracking-[0.4em] text-teal">CRUX8</div>
-        <div className="mt-1 text-xs font-semibold tracking-[0.5em] text-ink/40">
+        <div className="text-sm font-bold tracking-[0.4em] text-gold">CRUX8</div>
+        <div className="mt-1 text-xs font-semibold tracking-[0.5em] text-white/40">
           {tr("play", lang)}
         </div>
 
@@ -66,15 +66,15 @@ export default function Landing({
           </div>
         </div>
 
-        <h1 className="mt-6 font-display text-4xl font-bold leading-tight text-ink">
+        <h1 className="mt-6 font-display text-4xl font-bold leading-tight text-[#F5EFE0]">
           {tr("heroLine1", lang)}
           <br />
           {tr("heroLine2", lang)}
         </h1>
         {game.subtitle && L(game.subtitle, lang) && (
-          <p className="mt-3 text-lg font-medium text-teal">{L(game.subtitle, lang)}</p>
+          <p className="mt-3 text-lg font-medium text-gold/90">{L(game.subtitle, lang)}</p>
         )}
-        <p className="mt-4 max-w-xs text-base text-ink/60">{tr("heroSub", lang)}</p>
+        <p className="mt-4 max-w-xs text-base text-white/60">{tr("heroSub", lang)}</p>
       </motion.div>
 
       <motion.div
@@ -86,11 +86,11 @@ export default function Landing({
         <motion.button
           whileTap={{ scale: 0.96 }}
           onClick={onStart}
-          className="tap-target w-full rounded-2xl bg-gradient-to-r from-gold to-coral py-5 font-display text-xl font-bold text-white shadow-xl shadow-coral/25"
+          className="tap-target w-full rounded-2xl bg-gradient-to-r from-[#F6D47C] via-[#E8B83A] to-[#B9862A] py-5 font-display text-xl font-bold text-[#1a1206] shadow-xl shadow-gold/25"
         >
           {tr("start", lang)}
         </motion.button>
-        <p className="mt-6 text-sm font-semibold text-teal">{playCount}</p>
+        <p className="mt-6 text-sm font-semibold text-gold/80">{playCount}</p>
       </motion.div>
     </div>
   );

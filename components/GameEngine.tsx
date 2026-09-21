@@ -176,7 +176,7 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
           >
             🧬
           </motion.div>
-          <p className="mt-6 text-lg font-semibold tracking-[0.2em] text-teal">
+          <p className="mt-6 text-lg font-semibold tracking-[0.2em] text-gold">
             {calcLines.map((line, i) => (
               <span key={i}>
                 {line}

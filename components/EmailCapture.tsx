@@ -34,19 +34,19 @@ export default function EmailCapture({
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-teal/30 bg-teal/10 p-4 text-center"
+        className="rounded-2xl border border-gold/30 bg-gold/10 p-4 text-center"
       >
-        <p className="text-base font-semibold text-ink">{tr("emailDoneTitle", lang)}</p>
-        <p className="mt-1 text-sm text-ink/60">{tr("emailDoneSub", lang)}</p>
+        <p className="text-base font-semibold text-[#F5EFE0]">{tr("emailDoneTitle", lang)}</p>
+        <p className="mt-1 text-sm text-white/60">{tr("emailDoneSub", lang)}</p>
       </motion.div>
     );
   }
 
   return (
-    <form onSubmit={handle} className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
-      <p className="text-base font-semibold text-ink">{tr("emailTitle", lang)}</p>
-      <p className="mt-1 text-sm text-ink/70">{tr("emailSub", lang)}</p>
-      <p className="mt-1 text-sm font-semibold text-teal">{tr("emailPerk", lang)}</p>
+    <form onSubmit={handle} className="rounded-2xl border border-white/10 bg-white/[0.05] p-4 shadow-sm">
+      <p className="text-base font-semibold text-[#F5EFE0]">{tr("emailTitle", lang)}</p>
+      <p className="mt-1 text-sm text-white/70">{tr("emailSub", lang)}</p>
+      <p className="mt-1 text-sm font-semibold text-gold">{tr("emailPerk", lang)}</p>
       <div className="mt-3 flex gap-2">
         <input
           id="waitlist-email"
@@ -62,13 +62,13 @@ export default function EmailCapture({
           }}
           placeholder={tr("emailPlaceholder", lang)}
           aria-label="Email address"
-          className="tap-target min-w-0 flex-1 rounded-xl border border-ink/15 bg-cream px-4 text-base text-ink placeholder:text-ink/40 focus:border-gold focus:outline-none"
+          className="tap-target min-w-0 flex-1 rounded-xl border border-white/15 bg-black/40 px-4 text-base text-[#F5EFE0] placeholder:text-white/35 focus:border-gold focus:outline-none"
         />
         <motion.button
           whileTap={{ scale: 0.96 }}
           type="submit"
           disabled={state === "busy"}
-          className="tap-target shrink-0 rounded-xl bg-gold px-5 font-bold text-white disabled:opacity-60"
+          className="tap-target shrink-0 rounded-xl bg-gold px-5 font-bold text-[#1a1206] disabled:opacity-60"
         >
           {state === "busy" ? tr("emailBusy", lang) : tr("emailClaim", lang)}
         </motion.button>

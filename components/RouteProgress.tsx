@@ -25,18 +25,18 @@ export default function RouteProgress({
 
   return (
     <div className="w-full" role="progressbar" aria-valuenow={current} aria-valuemin={1} aria-valuemax={total}>
-      <div className="mb-1 flex items-center justify-between text-xs font-bold tracking-[0.25em] text-ink/45">
+      <div className="mb-1 flex items-center justify-between text-xs font-bold tracking-[0.25em] text-white/45">
         <span>{tr("routeLabel", lang)}</span>
-        <span className="text-sm tracking-normal text-ink/70">
+        <span className="text-sm tracking-normal text-white/70">
           {current}
-          <span className="text-ink/35"> / {total}</span>
+          <span className="text-white/35"> / {total}</span>
         </span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" aria-hidden>
         <path
           d={line}
           fill="none"
-          stroke="#17323B"
+          stroke="#F5EFE0"
           strokeOpacity={0.14}
           strokeWidth={3}
           strokeDasharray="2 7"
@@ -71,7 +71,7 @@ export default function RouteProgress({
                   fillOpacity: 1,
                 }}
                 transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                fill={done ? "#FFB627" : active ? "#FFFFFF" : "#17323B"}
+                fill={done ? "#FFB627" : active ? "#FFFFFF" : "#F5EFE0"}
                 fillOpacity={done ? 1 : active ? 1 : 0.08}
                 stroke={done ? "#E09A12" : "#FFB627"}
                 strokeOpacity={done ? 1 : active ? 1 : 0.35}
@@ -81,7 +81,7 @@ export default function RouteProgress({
                 <path
                   d={`M${p.x - 4.5},${p.y} l3,3 l6,-6.5`}
                   fill="none"
-                  stroke="#17323B"
+                  stroke="#1a1206"
                   strokeWidth={2.4}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -94,7 +94,7 @@ export default function RouteProgress({
                   textAnchor="middle"
                   fontSize={11}
                   fontWeight={800}
-                  fill="#17323B"
+                  fill="#1a1206"
                 >
                   {current}
                 </text>

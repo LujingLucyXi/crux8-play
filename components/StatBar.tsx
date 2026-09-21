@@ -15,9 +15,9 @@ export default function StatBar({
   return (
     <div>
       <div className="mb-1 flex items-center justify-between text-sm font-semibold">
-        <span className="tracking-wide text-ink/80">{label}</span>
+        <span className="tracking-wide text-white/80">{label}</span>
         <motion.span
-          className="tabular-nums text-ink"
+          className="tabular-nums text-[#F5EFE0]"
           initial={reduce ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: delay + 0.4 }}
@@ -25,9 +25,9 @@ export default function StatBar({
           {value}%
         </motion.span>
       </div>
-      <div className="h-3 w-full overflow-hidden rounded-full bg-ink/10">
+      <div className="h-3 w-full overflow-hidden rounded-full bg-white/10">
         <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-teal via-gold to-coral"
+          className="h-full rounded-full bg-gradient-to-r from-[#8a6414] via-gold to-[#F6D47C]"
           initial={reduce ? false : { width: 0 }}
           animate={{ width: `${value}%` }}
           transition={{ delay, duration: 0.9, ease: "easeOut" }}

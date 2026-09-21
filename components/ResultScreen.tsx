@@ -10,18 +10,19 @@ import BackgroundFX from "./BackgroundFX";
 import EmailCapture from "./EmailCapture";
 import Emblem from "./Emblem";
 
-// Darkens a hex color if it's too light to read on the cream background.
-function readable(hex: string): string {
+// Lightens a hex color if it's too dark to read on the near-black background.
+function onDark(hex: string): string {
   const h = hex.replace("#", "");
   const r = parseInt(h.slice(0, 2), 16);
   const g = parseInt(h.slice(2, 4), 16);
   const b = parseInt(h.slice(4, 6), 16);
   const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  if (lum <= 0.6) return hex;
-  const f = 0.52;
+  if (lum >= 0.45) return hex;
+  const f = Math.min(0.45 + (0.45 - lum), 0.85);
+  const mix = (v: number) => Math.round(v + (255 - v) * f);
   return (
     "#" +
-    [r, g, b].map((v) => Math.round(v * f).toString(16).padStart(2, "0")).join("")
+    [r, g, b].map((v) => mix(v).toString(16).padStart(2, "0")).join("")
   );
 }
 
@@ -142,13 +143,13 @@ export default function ResultScreen({
     URL.revokeObjectURL(url);
   }
 
-  const accentText = readable(result.accent);
+  const accentText = onDark(result.accent);
 
   return (
     <div className="relative flex flex-1 flex-col px-6 pb-8 pt-8">
       <BackgroundFX />
 
-      <p className="text-center text-sm font-semibold tracking-[0.3em] text-ink/50">
+      <p className="text-center text-sm font-semibold tracking-[0.3em] text-white/50">
         {flipped ? tr("youAre", lang) : tr("yourCard", lang)}
       </p>
 
@@ -177,7 +178,7 @@ export default function ResultScreen({
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
               >
-                <div className="relative flex h-[330px] w-full flex-col items-center justify-between overflow-hidden rounded-[25px] bg-ink px-5 py-6">
+                <div className="relative flex h-[330px] w-full flex-col items-center justify-between overflow-hidden rounded-[25px] bg-[#0d0d10] px-5 py-6">
                   <div
                     className="pointer-events-none absolute inset-0 opacity-[0.16]"
                     style={{
@@ -221,11 +222,11 @@ export default function ResultScreen({
               >
                 {L(result.name, lang)}
               </h1>
-              <p className="mx-auto mt-2 max-w-xs text-lg font-semibold text-ink">
+              <p className="mx-auto mt-2 max-w-xs text-lg font-semibold text-[#F5EFE0]">
                 “{L(result.tagline, lang)}”
               </p>
               {result.secondary && (
-                <p className="mt-2 max-w-xs text-sm text-ink/60">{L(result.secondary, lang)}</p>
+                <p className="mt-2 max-w-xs text-sm text-white/60">{L(result.secondary, lang)}</p>
               )}
             </motion.div>
           </div>
@@ -234,7 +235,7 @@ export default function ResultScreen({
 
       {!flipped && (
         <motion.p
-          className="mt-5 text-center text-sm font-bold tracking-[0.2em] text-teal"
+          className="mt-5 text-center text-sm font-bold tracking-[0.2em] text-gold"
           animate={{ opacity: [1, 0.4, 1] }}
           transition={{ duration: 1.6, repeat: Infinity }}
         >
@@ -251,10 +252,10 @@ export default function ResultScreen({
             transition={{ duration: 0.5 }}
           >
             <div className="mt-6">
-              <p className="mb-3 text-center text-sm font-semibold tracking-[0.2em] text-ink/50">
+              <p className="mb-3 text-center text-sm font-semibold tracking-[0.2em] text-white/50">
                 {tr("yourDna", lang)}
               </p>
-              <div className="flex flex-col gap-3 rounded-3xl bg-white p-5 shadow-lg shadow-ink/5 ring-1 ring-ink/5">
+              <div className="flex flex-col gap-3 rounded-3xl bg-white/[0.05] p-5 shadow-lg shadow-black/40 ring-1 ring-white/10">
                 {dna.map((s, i) => (
                   <StatBar
                     key={s.key}
@@ -266,34 +267,34 @@ export default function ResultScreen({
               </div>
             </div>
 
-            <p className="mt-6 text-center text-sm text-ink/60">{tr("sendToPartner", lang)}</p>
+            <p className="mt-6 text-center text-sm text-white/60">{tr("sendToPartner", lang)}</p>
 
             <div className="mt-3 flex flex-col gap-3">
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={handleShare}
                 disabled={busy}
-                className="tap-target w-full rounded-2xl bg-gradient-to-r from-gold to-coral py-4 text-lg font-bold text-white shadow-lg shadow-coral/25 disabled:opacity-70"
+                className="tap-target w-full rounded-2xl bg-gradient-to-r from-[#F6D47C] via-[#E8B83A] to-[#B9862A] py-4 text-lg font-bold text-[#1a1206] shadow-lg shadow-gold/25 disabled:opacity-70"
               >
                 {busy ? tr("building", lang) : tr("share", lang)}
               </motion.button>
-              <p className="-mt-1 text-center text-xs text-ink/45">{tr("shareHint", lang)}</p>
+              <p className="-mt-1 text-center text-xs text-white/45">{tr("shareHint", lang)}</p>
 
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={handleDownload}
-                className="tap-target w-full rounded-2xl border-2 border-ink/15 bg-white py-3.5 text-base font-bold text-ink"
+                className="tap-target w-full rounded-2xl border-2 border-white/15 bg-white/5 py-3.5 text-base font-bold text-[#F5EFE0]"
               >
                 {tr("save", lang)}
               </motion.button>
-              <p className="-mt-1 text-center text-xs text-ink/45">{tr("saveHint", lang)}</p>
+              <p className="-mt-1 text-center text-xs text-white/45">{tr("saveHint", lang)}</p>
 
-              {note && <p className="text-center text-sm font-medium text-teal">{note}</p>}
+              {note && <p className="text-center text-sm font-medium text-gold">{note}</p>}
 
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={handleInvite}
-                className="tap-target w-full rounded-2xl bg-tealdeep py-3.5 text-base font-bold text-white"
+                className="tap-target w-full rounded-2xl border-2 border-gold/50 bg-gold/10 py-3.5 text-base font-bold text-gold"
               >
                 {tr("invite", lang)}
               </motion.button>
@@ -302,7 +303,7 @@ export default function ResultScreen({
 
               <button
                 onClick={onPlayAgain}
-                className="tap-target w-full rounded-2xl py-3 text-base font-medium text-ink/50 hover:text-ink"
+                className="tap-target w-full rounded-2xl py-3 text-base font-medium text-white/50 hover:text-white"
               >
                 {tr("playAgain", lang)}
               </button>
