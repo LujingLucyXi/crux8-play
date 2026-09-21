@@ -5,7 +5,11 @@ import type { GameDefinition, Lang } from "@/lib/gameTypes";
 import { L } from "@/lib/gameTypes";
 import { tr } from "@/lib/i18n";
 import BackgroundFX from "./BackgroundFX";
+import Emblem from "./Emblem";
+import { results } from "@/games/climber-personality/results";
 
+// The gym door: a marquee of all 15 archetype emblems behind the pitch,
+// CTA reframed as a card pull.
 export default function Landing({
   game,
   lang,
@@ -19,6 +23,7 @@ export default function Landing({
   playCount: string;
   onStart: () => void;
 }) {
+  const marquee = [...results, ...results];
   return (
     <div className="relative flex flex-1 flex-col items-center justify-between px-6 pb-10 pt-6 text-center">
       <BackgroundFX />
@@ -45,23 +50,23 @@ export default function Landing({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col items-center"
+        className="flex w-full flex-col items-center"
       >
         <div className="text-sm font-bold tracking-[0.4em] text-teal">CRUX8</div>
         <div className="mt-1 text-xs font-semibold tracking-[0.5em] text-ink/40">
           {tr("play", lang)}
         </div>
 
-        <motion.div
-          className="my-8 text-6xl"
-          animate={{ rotate: [0, -8, 8, 0], y: [0, -8, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          aria-hidden
-        >
-          🧗
-        </motion.div>
+        {/* Archetype emblem marquee */}
+        <div className="mt-6 w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
+          <div className="animate-marquee flex w-max gap-3 py-2">
+            {marquee.map((r, i) => (
+              <Emblem key={`${r.id}-${i}`} id={r.id} accent={r.accent} size={76} />
+            ))}
+          </div>
+        </div>
 
-        <h1 className="text-4xl font-bold leading-tight text-ink">
+        <h1 className="mt-6 font-display text-4xl font-bold leading-tight text-ink">
           {tr("heroLine1", lang)}
           <br />
           {tr("heroLine2", lang)}
@@ -81,7 +86,7 @@ export default function Landing({
         <motion.button
           whileTap={{ scale: 0.96 }}
           onClick={onStart}
-          className="tap-target w-full rounded-2xl bg-gradient-to-r from-gold to-coral py-5 text-xl font-bold text-white shadow-xl shadow-coral/25"
+          className="tap-target w-full rounded-2xl bg-gradient-to-r from-gold to-coral py-5 font-display text-xl font-bold text-white shadow-xl shadow-coral/25"
         >
           {tr("start", lang)}
         </motion.button>

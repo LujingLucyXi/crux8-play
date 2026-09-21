@@ -6,8 +6,8 @@ import type { Lang, Question } from "@/lib/gameTypes";
 import { L } from "@/lib/gameTypes";
 import { tr } from "@/lib/i18n";
 
-const LETTERS = ["A", "B", "C", "D"];
-
+// Answers are "moves", not exam options: full-width tappable cards,
+// no A/B/C/D letters. Tap a move, chalk flies, auto-advance.
 export default function QuestionCard({
   question,
   lang,
@@ -39,12 +39,12 @@ export default function QuestionCard({
       transition={{ type: "spring", stiffness: 260, damping: 26 }}
       className="flex flex-1 flex-col"
     >
-      <div className="rounded-3xl bg-white p-6 shadow-lg shadow-ink/5 ring-1 ring-ink/5">
-        <h2 className="text-2xl font-bold leading-snug text-ink">{L(question.prompt, lang)}</h2>
-      </div>
+      <h2 className="font-display text-[26px] font-bold leading-snug text-ink">
+        {L(question.prompt, lang)}
+      </h2>
 
-      <div className="mt-5 flex flex-col gap-3">
-        {question.answers.map((a, i) => {
+      <div className="mt-6 flex flex-col gap-3">
+        {question.answers.map((a) => {
           const isSel = selected === a.id;
           const dim = selected && !isSel;
           return (
@@ -53,24 +53,41 @@ export default function QuestionCard({
               whileTap={{ scale: 0.97 }}
               animate={{
                 scale: isSel ? 1.02 : 1,
-                opacity: dim ? 0.4 : 1,
+                opacity: dim ? 0.35 : 1,
+                y: dim ? 2 : 0,
               }}
+              transition={{ type: "spring", stiffness: 400, damping: 22 }}
               onClick={() => handle(a.id)}
               aria-pressed={isSel}
-              className={`tap-target flex items-center gap-4 rounded-2xl border px-4 py-4 text-left shadow-sm transition-colors ${
+              className={`tap-target flex items-center gap-4 rounded-2xl px-5 py-4 text-left shadow-sm transition-colors ${
                 isSel
-                  ? "border-gold bg-gold/15"
-                  : "border-ink/10 bg-white hover:border-teal/40"
+                  ? "bg-white shadow-lg shadow-gold/30 ring-2 ring-gold"
+                  : "bg-white/85 ring-1 ring-ink/10 hover:ring-teal/50"
               }`}
             >
               <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-                  isSel ? "bg-gold text-white" : "bg-ink/5 text-teal"
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors ${
+                  isSel ? "bg-gold text-white" : "bg-ink/[0.07] text-teal"
                 }`}
+                aria-hidden
               >
-                {isSel ? "✓" : LETTERS[i]}
+                {isSel ? (
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path
+                      d="M2.5 7.5l3.2 3.2L11.5 4"
+                      stroke="currentColor"
+                      strokeWidth="2.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : (
+                  <span className="h-2.5 w-2.5 rounded-full bg-current opacity-60" />
+                )}
               </span>
-              <span className="text-base font-medium text-ink">{L(a.label, lang)}</span>
+              <span className="text-[17px] font-medium leading-snug text-ink">
+                {L(a.label, lang)}
+              </span>
             </motion.button>
           );
         })}
@@ -79,7 +96,7 @@ export default function QuestionCard({
       {canSkip && !selected && (
         <button
           onClick={onSkip}
-          className="tap-target mx-auto mt-4 text-sm font-medium text-ink/40 hover:text-ink/70"
+          className="tap-target mx-auto mt-5 text-sm font-medium text-ink/40 hover:text-ink/70"
         >
           {tr("skip", lang)}
         </button>

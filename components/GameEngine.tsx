@@ -18,7 +18,7 @@ import {
 } from "@/lib/session";
 import Landing from "./Landing";
 import QuestionCard from "./QuestionCard";
-import ProgressBar from "./ProgressBar";
+import RouteProgress from "./RouteProgress";
 import ResultScreen from "./ResultScreen";
 import BackgroundFX from "./BackgroundFX";
 
@@ -144,8 +144,8 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
       {phase === "playing" && (
         <div key="playing" className="relative flex flex-1 flex-col px-6 pb-8 pt-10">
           <BackgroundFX />
-          <div className="mb-6">
-            <ProgressBar current={index + 1} total={game.questions.length} />
+          <div className="mb-4">
+            <RouteProgress current={index + 1} total={game.questions.length} lang={lang} />
           </div>
           <AnimatePresence mode="wait">
             <QuestionCard

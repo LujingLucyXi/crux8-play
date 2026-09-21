@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import type { DnaScore, Lang, ResultType } from "@/lib/gameTypes";
 import { L } from "@/lib/gameTypes";
@@ -25,6 +25,8 @@ function readable(hex: string): string {
   );
 }
 
+// The card pull: the result starts face-down as a gold Crux8 card.
+// One tap flips it to reveal your archetype — then the DNA + actions fade in.
 export default function ResultScreen({
   result,
   dna,
@@ -46,6 +48,8 @@ export default function ResultScreen({
 }) {
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  const [flipped, setFlipped] = useState(false);
+  const [details, setDetails] = useState(false);
 
   // Server-rendered PNG (reliable on every device). Includes language.
   function cardUrl(): string {
@@ -144,91 +148,168 @@ export default function ResultScreen({
     <div className="relative flex flex-1 flex-col px-6 pb-8 pt-8">
       <BackgroundFX />
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.92 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="text-center"
-      >
-        <p className="text-sm font-semibold tracking-[0.3em] text-ink/50">
-          {tr("youAre", lang)}
-        </p>
+      <p className="text-center text-sm font-semibold tracking-[0.3em] text-ink/50">
+        {flipped ? tr("youAre", lang) : tr("yourCard", lang)}
+      </p>
+
+      {/* Card flip: gold back <-> archetype hero */}
+      <div className="mt-4" style={{ perspective: 1200 }}>
         <motion.div
-          className="my-3"
-          initial={{ scale: 0, rotate: -12 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.15 }}
+          className="relative"
+          style={{ transformStyle: "preserve-3d" }}
+          initial={false}
+          animate={{ rotateY: flipped ? 180 : 0 }}
+          transition={{ duration: 0.7, ease: [0.2, 0.7, 0.3, 1] }}
+          onAnimationComplete={() => {
+            if (flipped) setDetails(true);
+          }}
         >
-          <Emblem id={result.id} accent={result.accent} />
+          {/* Front: face-down gold card (taller face drives layout via back, so center it) */}
+          <div className="absolute inset-0 flex items-center justify-center [backface-visibility:hidden]">
+            <motion.button
+              whileTap={{ scale: 0.94 }}
+              onClick={() => setFlipped(true)}
+              className="tap-target"
+              aria-label={tr("revealTap", lang)}
+            >
+              <motion.div
+                className="w-60 overflow-hidden rounded-[28px] bg-gradient-to-br from-[#FFD97A] via-gold to-coral p-[3px] shadow-2xl shadow-gold/40"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <div className="relative flex h-[330px] w-full flex-col items-center justify-between overflow-hidden rounded-[25px] bg-ink px-5 py-6">
+                  <div
+                    className="pointer-events-none absolute inset-0 opacity-[0.16]"
+                    style={{
+                      background:
+                        "repeating-linear-gradient(135deg, transparent 0 14px, rgba(255,255,255,0.9) 14px 16px)",
+                    }}
+                    aria-hidden
+                  />
+                  <div className="relative text-xs font-bold tracking-[0.45em] text-gold">
+                    CRUX8
+                  </div>
+                  <div className="relative flex h-28 w-28 items-center justify-center rounded-full border-4 border-gold/80">
+                    <span className="font-display text-5xl font-bold text-gold">?</span>
+                  </div>
+                  <div className="relative text-[10px] font-semibold tracking-[0.5em] text-white/50">
+                    PLAY
+                  </div>
+                </div>
+              </motion.div>
+            </motion.button>
+          </div>
+
+          {/* Back: the revealed archetype hero (in normal flow, sets height) */}
+          <div className="[backface-visibility:hidden] [transform:rotateY(180deg)]">
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 14 }}
+              className="flex flex-col items-center text-center"
+            >
+              <motion.div
+                initial={{ scale: 0, rotate: -12 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.35 }}
+              >
+                <Emblem id={result.id} accent={result.accent} />
+              </motion.div>
+              <h1
+                className="mt-2 font-display text-3xl font-bold leading-tight"
+                style={{ color: accentText }}
+              >
+                {L(result.name, lang)}
+              </h1>
+              <p className="mx-auto mt-2 max-w-xs text-lg font-semibold text-ink">
+                “{L(result.tagline, lang)}”
+              </p>
+              {result.secondary && (
+                <p className="mt-2 max-w-xs text-sm text-ink/60">{L(result.secondary, lang)}</p>
+              )}
+            </motion.div>
+          </div>
         </motion.div>
-        <h1 className="text-3xl font-bold leading-tight" style={{ color: accentText }}>
-          {L(result.name, lang)}
-        </h1>
-        <p className="mx-auto mt-2 max-w-xs text-lg font-semibold text-ink">
-          “{L(result.tagline, lang)}”
-        </p>
-        {result.secondary && (
-          <p className="mt-2 text-sm text-ink/60">{L(result.secondary, lang)}</p>
+      </div>
+
+      {!flipped && (
+        <motion.p
+          className="mt-5 text-center text-sm font-bold tracking-[0.2em] text-teal"
+          animate={{ opacity: [1, 0.4, 1] }}
+          transition={{ duration: 1.6, repeat: Infinity }}
+        >
+          {tr("revealTap", lang)}
+        </motion.p>
+      )}
+
+      {/* DNA + actions fade in after the flip */}
+      <AnimatePresence>
+        {details && (
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="mt-6">
+              <p className="mb-3 text-center text-sm font-semibold tracking-[0.2em] text-ink/50">
+                {tr("yourDna", lang)}
+              </p>
+              <div className="flex flex-col gap-3 rounded-3xl bg-white p-5 shadow-lg shadow-ink/5 ring-1 ring-ink/5">
+                {dna.map((s, i) => (
+                  <StatBar
+                    key={s.key}
+                    label={`${s.emoji} ${L(s.label, lang)}`}
+                    value={s.value}
+                    delay={0.2 + i * 0.12}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <p className="mt-6 text-center text-sm text-ink/60">{tr("sendToPartner", lang)}</p>
+
+            <div className="mt-3 flex flex-col gap-3">
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleShare}
+                disabled={busy}
+                className="tap-target w-full rounded-2xl bg-gradient-to-r from-gold to-coral py-4 text-lg font-bold text-white shadow-lg shadow-coral/25 disabled:opacity-70"
+              >
+                {busy ? tr("building", lang) : tr("share", lang)}
+              </motion.button>
+              <p className="-mt-1 text-center text-xs text-ink/45">{tr("shareHint", lang)}</p>
+
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleDownload}
+                className="tap-target w-full rounded-2xl border-2 border-ink/15 bg-white py-3.5 text-base font-bold text-ink"
+              >
+                {tr("save", lang)}
+              </motion.button>
+              <p className="-mt-1 text-center text-xs text-ink/45">{tr("saveHint", lang)}</p>
+
+              {note && <p className="text-center text-sm font-medium text-teal">{note}</p>}
+
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleInvite}
+                className="tap-target w-full rounded-2xl bg-tealdeep py-3.5 text-base font-bold text-white"
+              >
+                {tr("invite", lang)}
+              </motion.button>
+
+              <EmailCapture lang={lang} onSubmit={onWaitlist} />
+
+              <button
+                onClick={onPlayAgain}
+                className="tap-target w-full rounded-2xl py-3 text-base font-medium text-ink/50 hover:text-ink"
+              >
+                {tr("playAgain", lang)}
+              </button>
+            </div>
+          </motion.div>
         )}
-      </motion.div>
-
-      <div className="mt-6">
-        <p className="mb-3 text-center text-sm font-semibold tracking-[0.2em] text-ink/50">
-          {tr("yourDna", lang)}
-        </p>
-        <div className="flex flex-col gap-3 rounded-3xl bg-white p-5 shadow-lg shadow-ink/5 ring-1 ring-ink/5">
-          {dna.map((s, i) => (
-            <StatBar
-              key={s.key}
-              label={`${s.emoji} ${L(s.label, lang)}`}
-              value={s.value}
-              delay={0.3 + i * 0.12}
-            />
-          ))}
-        </div>
-      </div>
-
-      <p className="mt-6 text-center text-sm text-ink/60">{tr("sendToPartner", lang)}</p>
-
-      <div className="mt-3 flex flex-col gap-3">
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={handleShare}
-          disabled={busy}
-          className="tap-target w-full rounded-2xl bg-gradient-to-r from-gold to-coral py-4 text-lg font-bold text-white shadow-lg shadow-coral/25 disabled:opacity-70"
-        >
-          {busy ? tr("building", lang) : tr("share", lang)}
-        </motion.button>
-        <p className="-mt-1 text-center text-xs text-ink/45">{tr("shareHint", lang)}</p>
-
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={handleDownload}
-          className="tap-target w-full rounded-2xl border-2 border-ink/15 bg-white py-3.5 text-base font-bold text-ink"
-        >
-          {tr("save", lang)}
-        </motion.button>
-        <p className="-mt-1 text-center text-xs text-ink/45">{tr("saveHint", lang)}</p>
-
-        {note && <p className="text-center text-sm font-medium text-teal">{note}</p>}
-
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={handleInvite}
-          className="tap-target w-full rounded-2xl bg-tealdeep py-3.5 text-base font-bold text-white"
-        >
-          {tr("invite", lang)}
-        </motion.button>
-
-        <EmailCapture lang={lang} onSubmit={onWaitlist} />
-
-        <button
-          onClick={onPlayAgain}
-          className="tap-target w-full rounded-2xl py-3 text-base font-medium text-ink/50 hover:text-ink"
-        >
-          {tr("playAgain", lang)}
-        </button>
-      </div>
+      </AnimatePresence>
     </div>
   );
 }
