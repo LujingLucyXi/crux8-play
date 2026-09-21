@@ -6,6 +6,7 @@ import { L, type Lang } from "@/lib/gameTypes";
 import BackgroundFX from "@/components/BackgroundFX";
 import Emblem from "@/components/Emblem";
 import StatBar from "@/components/StatBar";
+import SharedExtras from "./extras";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://play.crux8.app";
@@ -94,6 +95,8 @@ export default function SharedCard({ params, searchParams }: Props) {
       <p className="mt-2 text-center text-sm font-medium text-white/50">
         {lang === "zh" ? "一张攀岩人格卡片" : "A climber personality card"}
       </p>
+
+      <SharedExtras id={result.id} dnaValues={values} lang={lang} />
 
       <div className="mt-6 flex flex-col items-center text-center">
         <Emblem id={result.id} accent={result.accent} size={168} />

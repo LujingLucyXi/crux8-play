@@ -1,10 +1,12 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import type { DnaScore, Lang, ResultType } from "@/lib/gameTypes";
 import { L } from "@/lib/gameTypes";
 import { tr } from "@/lib/i18n";
+import { recordResult } from "@/lib/collection";
 import StatBar from "./StatBar";
 import BackgroundFX from "./BackgroundFX";
 import EmailCapture from "./EmailCapture";
@@ -51,6 +53,17 @@ export default function ResultScreen({
   const [note, setNote] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
   const [details, setDetails] = useState(false);
+  const recordedRef = useRef(false);
+
+  // Own this card in the collection (drives the dex + gold foil count).
+  useEffect(() => {
+    if (recordedRef.current) return;
+    recordedRef.current = true;
+    recordResult(
+      result.id,
+      dna.map((d) => d.value)
+    );
+  }, [result.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Server-rendered PNG (reliable on every device). Includes language.
   function cardUrl(): string {
@@ -309,6 +322,13 @@ export default function ResultScreen({
               </motion.button>
 
               <EmailCapture lang={lang} onSubmit={onWaitlist} />
+
+              <Link
+                href="/collection"
+                className="tap-target w-full rounded-2xl py-3 text-center text-base font-medium text-white/50 hover:text-white"
+              >
+                {lang === "zh" ? "🃏 我的卡片收藏" : "🃏 My card collection"}
+              </Link>
 
               <button
                 onClick={onPlayAgain}

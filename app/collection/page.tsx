@@ -1,0 +1,161 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { results } from "@/games/climber-personality/results";
+import { L, type Lang } from "@/lib/gameTypes";
+import BackgroundFX from "@/components/BackgroundFX";
+import Emblem from "@/components/Emblem";
+import {
+  loadCollection,
+  isFoil,
+  discoveredCount,
+  type Collection,
+} from "@/lib/collection";
+
+const T = {
+  title: { en: "Card Collection", zh: "卡片收藏" },
+  discovered: { en: "discovered", zh: "已发现" },
+  yours: { en: "YOURS", zh: "你的" },
+  spotted: { en: "SPOTTED", zh: "偶遇" },
+  foil: { en: "✦ GOLD FOIL", zh: "✦ 金箔版" },
+  unknown: { en: "???", zh: "???" },
+  hint: {
+    en: "Spot new archetypes by opening cards your friends share.",
+    zh: "打开朋友分享的卡片，就能发现新的类型。",
+  },
+  shareCta: { en: "🃏 Share my card to be spotted", zh: "🃏 分享我的卡片" },
+  back: { en: "← Back to the quiz", zh: "← 返回测试" },
+  copied: { en: "Link copied — go be spotted ✨", zh: "链接已复制 ✨" },
+} as const;
+
+export default function CollectionPage() {
+  const [lang, setLang] = useState<Lang>("en");
+  const [col, setCol] = useState<Collection | null>(null);
+  const [note, setNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (/^zh/i.test(navigator.language || "")) setLang("zh");
+    setCol(loadCollection());
+  }, []);
+
+  const t = (k: keyof typeof T) => T[k][lang];
+  const found = col ? discoveredCount(col) : 0;
+
+  async function handleShare() {
+    if (!col?.owned) return;
+    const s = (col.lastDna || []).join(",");
+    const url = `${window.location.origin}/c/${col.owned}?s=${s}&l=${lang}`;
+    const text =
+      lang === "zh" ? `我的攀岩人格卡片 🧗 打开看看你是哪种？` : `My climber card 🧗 What's your archetype?`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Crux8 Play", text, url });
+        return;
+      } catch {
+        /* cancelled */
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setNote(t("copied"));
+    } catch {
+      setNote(url);
+    }
+  }
+
+  return (
+    <main className="relative flex min-h-dvh flex-col items-center px-6 pb-10 pt-10">
+      <BackgroundFX />
+
+      <p className="text-center text-xs font-bold tracking-[0.45em] text-gold">
+        CRUX8 PLAY
+      </p>
+      <h1 className="mt-2 font-display text-2xl font-bold text-[#F5EFE0]">
+        {t("title")}
+      </h1>
+
+      {/* Progress */}
+      <div className="mt-4 w-full max-w-sm">
+        <div className="mb-2 flex items-baseline justify-between">
+          <span className="text-sm font-semibold text-white/60">
+            {found}/15 {t("discovered")}
+          </span>
+          <span className="font-display text-lg font-bold text-gold">
+            {Math.round((found / 15) * 100)}%
+          </span>
+        </div>
+        <div className="h-2.5 w-full overflow-hidden rounded-full bg-white/10">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-[#8a6a1f] via-[#E8B83A] to-[#F6D47C] transition-all duration-700"
+            style={{ width: `${(found / 15) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Dex grid */}
+      <div className="mt-6 grid w-full max-w-sm grid-cols-3 gap-4">
+        {results.map((r) => {
+          const owned = col?.owned === r.id;
+          const spotted = !!col?.spotted.includes(r.id);
+          const foil = !!col && owned && isFoil(col, r.id);
+          return (
+            <div key={r.id} className="flex flex-col items-center text-center">
+              <div
+                className={[
+                  "flex h-24 w-24 items-center justify-center rounded-full transition",
+                  owned
+                    ? foil
+                      ? "shadow-[0_0_24px_rgba(246,212,124,0.55)] ring-2 ring-[#F6D47C]"
+                      : "shadow-[0_0_16px_rgba(232,184,58,0.35)] ring-2 ring-gold/70"
+                    : spotted
+                      ? "opacity-70 saturate-[0.6] ring-1 ring-white/20"
+                      : "bg-white/[0.04] ring-1 ring-white/10",
+                ].join(" ")}
+              >
+                {owned || spotted ? (
+                  <Emblem id={r.id} accent={r.accent} size={76} />
+                ) : (
+                  <span className="font-display text-3xl font-bold text-white/20">?</span>
+                )}
+              </div>
+              <p
+                className={`mt-2 text-[11px] font-bold leading-tight ${
+                  owned ? "text-gold" : spotted ? "text-white/70" : "text-white/25"
+                }`}
+              >
+                {owned || spotted ? L(r.name, lang) : t("unknown")}
+              </p>
+              <p
+                className={`text-[10px] font-semibold tracking-[0.15em] ${
+                  foil ? "text-[#F6D47C]" : owned ? "text-gold/80" : "text-white/30"
+                }`}
+              >
+                {foil ? t("foil") : owned ? t("yours") : spotted ? t("spotted") : ""}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="mt-6 max-w-xs text-center text-xs text-white/45">{t("hint")}</p>
+
+      {col?.owned && (
+        <button
+          onClick={handleShare}
+          className="tap-target mt-4 w-full max-w-sm rounded-2xl bg-gradient-to-r from-[#F6D47C] via-[#E8B83A] to-[#B9862A] py-4 text-lg font-bold text-[#1a1206] shadow-lg shadow-gold/25"
+        >
+          {t("shareCta")}
+        </button>
+      )}
+      {note && <p className="mt-3 text-center text-sm font-medium text-gold">{note}</p>}
+
+      <Link
+        href="/"
+        className="tap-target mt-6 rounded-2xl py-3 text-base font-medium text-white/50 hover:text-white"
+      >
+        {t("back")}
+      </Link>
+    </main>
+  );
+}
