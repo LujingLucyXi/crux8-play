@@ -12,6 +12,7 @@ import {
   discoveredCount,
   type Collection,
 } from "@/lib/collection";
+import { makeCrewCode, createCrew } from "@/lib/crew";
 
 const T = {
   title: { en: "Card Collection", zh: "卡片收藏" },
@@ -25,6 +26,11 @@ const T = {
     zh: "打开朋友分享的卡片，就能发现新的类型。",
   },
   shareCta: { en: "🃏 Share my card to be spotted", zh: "🃏 分享我的卡片" },
+  startCrew: { en: "🪢 Start a climbing crew", zh: "🪢 创建攀岩小队" },
+  crewFail: {
+    en: "Couldn't create the crew — is the database set up?",
+    zh: "创建失败 — 数据库设置好了吗？",
+  },
   back: { en: "← Back to the quiz", zh: "← 返回测试" },
   copied: { en: "Link copied — go be spotted ✨", zh: "链接已复制 ✨" },
 } as const;
@@ -33,6 +39,7 @@ export default function CollectionPage() {
   const [lang, setLang] = useState<Lang>("en");
   const [col, setCol] = useState<Collection | null>(null);
   const [note, setNote] = useState<string | null>(null);
+  const [crewBusy, setCrewBusy] = useState(false);
 
   useEffect(() => {
     if (/^zh/i.test(navigator.language || "")) setLang("zh");
@@ -41,6 +48,19 @@ export default function CollectionPage() {
 
   const t = (k: keyof typeof T) => T[k][lang];
   const found = col ? discoveredCount(col) : 0;
+
+  async function handleStartCrew() {
+    if (!col?.owned || crewBusy) return;
+    setCrewBusy(true);
+    const code = makeCrewCode();
+    const ok = await createCrew(code, col.owned, col.lastDna || []);
+    setCrewBusy(false);
+    if (ok) {
+      window.location.href = `/crew/${code}`;
+    } else {
+      setNote(t("crewFail"));
+    }
+  }
 
   async function handleShare() {
     if (!col?.owned) return;
@@ -141,12 +161,21 @@ export default function CollectionPage() {
       <p className="mt-6 max-w-xs text-center text-xs text-white/45">{t("hint")}</p>
 
       {col?.owned && (
-        <button
-          onClick={handleShare}
-          className="tap-target mt-4 w-full max-w-sm rounded-2xl bg-gradient-to-r from-[#F6D47C] via-[#E8B83A] to-[#B9862A] py-4 text-lg font-bold text-[#1a1206] shadow-lg shadow-gold/25"
-        >
-          {t("shareCta")}
-        </button>
+        <>
+          <button
+            onClick={handleShare}
+            className="tap-target mt-4 w-full max-w-sm rounded-2xl bg-gradient-to-r from-[#F6D47C] via-[#E8B83A] to-[#B9862A] py-4 text-lg font-bold text-[#1a1206] shadow-lg shadow-gold/25"
+          >
+            {t("shareCta")}
+          </button>
+          <button
+            onClick={handleStartCrew}
+            disabled={crewBusy}
+            className="tap-target mt-3 w-full max-w-sm rounded-2xl bg-white/10 py-4 text-lg font-bold text-white ring-1 ring-white/20 disabled:opacity-50"
+          >
+            {crewBusy ? "…" : t("startCrew")}
+          </button>
+        </>
       )}
       {note && <p className="mt-3 text-center text-sm font-medium text-gold">{note}</p>}
 

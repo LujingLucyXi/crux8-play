@@ -7,6 +7,7 @@ import type { DnaScore, Lang, ResultType } from "@/lib/gameTypes";
 import { L } from "@/lib/gameTypes";
 import { tr } from "@/lib/i18n";
 import { recordResult } from "@/lib/collection";
+import { getPendingCrew } from "@/lib/crew";
 import StatBar from "./StatBar";
 import BackgroundFX from "./BackgroundFX";
 import EmailCapture from "./EmailCapture";
@@ -53,6 +54,7 @@ export default function ResultScreen({
   const [note, setNote] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
   const [details, setDetails] = useState(false);
+  const [pendingCrew, setPendingCrew] = useState<string | null>(null);
   const recordedRef = useRef(false);
 
   // Own this card in the collection (drives the dex + gold foil count).
@@ -63,6 +65,7 @@ export default function ResultScreen({
       result.id,
       dna.map((d) => d.value)
     );
+    setPendingCrew(getPendingCrew());
   }, [result.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Server-rendered PNG (reliable on every device). Includes language.
@@ -292,6 +295,14 @@ export default function ResultScreen({
             <p className="mt-6 text-center text-sm text-white/60">{tr("sendToPartner", lang)}</p>
 
             <div className="mt-3 flex flex-col gap-3">
+              {pendingCrew && (
+                <Link
+                  href={`/crew/${pendingCrew}`}
+                  className="tap-target block w-full rounded-2xl bg-gradient-to-r from-[#F6D47C] via-[#E8B83A] to-[#B9862A] py-4 text-center text-lg font-bold text-[#1a1206] shadow-lg shadow-gold/25"
+                >
+                  {lang === "zh" ? `🪢 加入小队 ${pendingCrew}` : `🪢 Join crew ${pendingCrew}`}
+                </Link>
+              )}
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={handleShare}

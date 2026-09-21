@@ -21,8 +21,11 @@ function getClient(): SupabaseClient | null {
   return client;
 }
 
-export interface SessionRow {
-  id: string;
+export function getSupabase(): SupabaseClient | null {
+  return getClient();
+}
+
+export interface SessionRow {  id: string;
   game_id: string;
   started_at: string;
   completed_at?: string | null;
