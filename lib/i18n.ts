@@ -29,6 +29,7 @@ export const UI = {
   invite: { en: "🔗 Invite a friend to play", zh: "🔗 邀请好友来测" },
   inviteCopied: { en: "Link copied — send it to your crew! 🧗", zh: "链接已复制，发给你的攀岩搭子！🧗" },
   savedShareNote: { en: "Saved your DNA card — post it anywhere 👀", zh: "已保存 DNA 卡片 — 随便发 👀" },
+  longPressNote: { en: "Long-press the image to save it 📸", zh: "长按图片保存 📸" },
   screenshotNote: { en: "Screenshot this screen to share your result 📸", zh: "截图这个页面来分享结果 📸" },
   playAgain: { en: "Play again", zh: "再玩一次" },
 
