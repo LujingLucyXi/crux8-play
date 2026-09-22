@@ -25,6 +25,7 @@ export const UI = {
   shareHint: { en: "Opens your phone's share sheet (Messages, AirDrop…)", zh: "打开手机分享菜单（信息、隔空投送…）" },
   save: { en: "⬇ Save card — IG · TikTok · WeChat · 小红书", zh: "⬇ 保存卡片 — 发 IG、TikTok、微信、小红书" },
   saveHint: { en: "Saves the image, then post it to any app", zh: "先保存图片，再发到任意 App" },
+  saveHintMobile: { en: "Tap Save → “Save Image” drops it straight into your Photos 📸", zh: "点保存 → 点「存储图像」，直接进相册 📸" },
   savedNote: { en: "Saved! Post to IG, TikTok, WeChat Moments, 小红书 — anywhere 👀", zh: "已保存！发 IG、TikTok、朋友圈、小红书都行 👀" },
   invite: { en: "🔗 Invite a friend to play", zh: "🔗 邀请好友来测" },
   inviteCopied: { en: "Link copied — send it to your crew! 🧗", zh: "链接已复制，发给你的攀岩搭子！🧗" },

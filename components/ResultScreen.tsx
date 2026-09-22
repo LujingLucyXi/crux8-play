@@ -353,7 +353,12 @@ export default function ResultScreen({
               >
                 {tr("save", lang)}
               </motion.button>
-              <p className="-mt-1 text-center text-xs text-white/45">{tr("saveHint", lang)}</p>
+              <p className="-mt-1 text-center text-xs text-white/45">
+                {typeof navigator !== "undefined" &&
+                /iPad|iPhone|iPod|Android/.test(navigator.userAgent)
+                  ? tr("saveHintMobile", lang)
+                  : tr("saveHint", lang)}
+              </p>
 
               {note && <p className="text-center text-sm font-medium text-gold">{note}</p>}
 
