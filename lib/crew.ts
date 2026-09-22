@@ -30,6 +30,21 @@ export interface CrewIdentity {
   email: string | null;
 }
 
+// Last crew failure reason, for honest error messages instead of guessing.
+// "not-configured" = Supabase env vars missing at build time (no request sent).
+// Anything else = the request went out and Supabase (or the network) said no.
+let lastCrewError: string | null = null;
+export function getLastCrewError(): string | null {
+  return lastCrewError;
+}
+function fail(reason: string): false {
+  lastCrewError = reason;
+  // Always log the real error — the UI message stays short, the console has truth.
+  // eslint-disable-next-line no-console
+  console.error("[crew]", reason);
+  return false;
+}
+
 // Creates the crew and adds the creator as the first member.
 export async function createCrew(
   code: string,
@@ -37,13 +52,13 @@ export async function createCrew(
   dna: number[]
 ): Promise<boolean> {
   const c = getSupabase();
-  if (!c) return false;
+  if (!c) return fail("not-configured: Supabase env vars missing (no request sent)");
   try {
     const { error } = await c.from("crews").insert({ code });
-    if (error) return false;
+    if (error) return fail(`crews insert: ${error.message} (${error.code})`);
     return joinCrew(code, archetypeId, dna);
-  } catch {
-    return false;
+  } catch (e) {
+    return fail(`crews request threw: ${e instanceof Error ? e.message : String(e)}`);
   }
 }
 
@@ -54,17 +69,18 @@ export async function joinCrewWithIdentity(
   identity: CrewIdentity
 ): Promise<boolean> {
   const c = getSupabase();
-  if (!c) return false;
+  if (!c) return fail("not-configured: Supabase env vars missing (no request sent)");
   const CODE = code.toUpperCase();
   try {
     if (identity.email) {
-      const { data: existing } = await c
+      const { data: existing, error: selError } = await c
         .from("crew_members")
         .select("id")
         .eq("crew_code", CODE)
         .eq("email", identity.email)
         .limit(1)
         .maybeSingle();
+      if (selError) return fail(`members lookup: ${selError.message} (${selError.code})`);
       if (existing) {
         const { error } = await c
           .from("crew_members")
@@ -74,7 +90,8 @@ export async function joinCrewWithIdentity(
             display_name: identity.displayName,
           })
           .eq("id", (existing as { id: string }).id);
-        return !error;
+        if (error) return fail(`members rejoin update: ${error.message} (${error.code})`);
+        return true;
       }
     }
     const { error } = await c.from("crew_members").insert({
@@ -84,9 +101,10 @@ export async function joinCrewWithIdentity(
       display_name: identity.displayName,
       email: identity.email,
     });
-    return !error;
-  } catch {
-    return false;
+    if (error) return fail(`members insert: ${error.message} (${error.code})`);
+    return true;
+  } catch (e) {
+    return fail(`members request threw: ${e instanceof Error ? e.message : String(e)}`);
   }
 }
 

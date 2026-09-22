@@ -12,7 +12,7 @@ import {
   discoveredCount,
   type Collection,
 } from "@/lib/collection";
-import { makeCrewCode, createCrew, markCreatedCrew } from "@/lib/crew";
+import { makeCrewCode, createCrew, markCreatedCrew, getLastCrewError } from "@/lib/crew";
 import {
   MILESTONES,
   achievedMilestones,
@@ -47,8 +47,12 @@ const T = {
   unlockedNow: { en: "Milestone unlocked!", zh: "解锁新成就！" },
   startCrew: { en: "🪢 Start a climbing crew", zh: "🪢 创建攀岩小队" },
   crewFail: {
-    en: "Couldn't create the crew — is the database set up?",
-    zh: "创建失败 — 数据库设置好了吗？",
+    en: "Couldn't create the crew.",
+    zh: "创建小队失败。",
+  },
+  crewNotConfigured: {
+    en: "Supabase isn't connected in this build — check the Vercel env vars and redeploy.",
+    zh: "这个构建没有连接 Supabase — 检查 Vercel 环境变量并重新部署。",
   },
   back: { en: "← Back to the quiz", zh: "← 返回测试" },
   copied: { en: "Link copied — go be spotted ✨", zh: "链接已复制 ✨" },
@@ -84,7 +88,13 @@ export default function CollectionPage() {
       markCreatedCrew(code);
       window.location.href = `/crew/${code}`;
     } else {
-      setNote(t("crewFail"));
+      const detail = getLastCrewError();
+      if (detail && detail.startsWith("not-configured")) {
+        setNote(t("crewNotConfigured"));
+      } else {
+        // Show the real reason (also in console) so it can be pasted for debugging.
+        setNote(detail ? `${t("crewFail")} ${detail}` : t("crewFail"));
+      }
     }
   }
 
