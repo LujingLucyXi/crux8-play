@@ -124,19 +124,27 @@ export default function ResultScreen({
   async function handleDownload() {
     setNote(null);
     const nav = navigator as Navigator & { canShare?: (d?: ShareData) => boolean };
+    // Only mobile goes through the share sheet: desktop Safari claims
+    // canShare({files}) but then fails, and the window.open fallback gets
+    // popup-blocked — the button appears dead. Desktop keeps <a download>.
+    const isMobile = /iPad|iPhone|iPod|Android/.test(navigator.userAgent);
     try {
       const res = await fetch(cardUrl());
       const blob = await res.blob();
-      // iOS Safari ignores <a download> — go through the share sheet instead,
-      // which offers "Save Image" / "Save to Files".
-      const file = new File([blob], "crux8-climber-card.png", { type: "image/png" });
-      if (nav.canShare && nav.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: "Crux8 Play" });
-        onShareSuccess();
-        setNote(tr("savedNote", lang));
-        return;
-      }
-      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+      if (isMobile) {
+        // iOS Safari ignores <a download> — share sheet offers
+        // "Save Image" / "Save to Files".
+        const file = new File([blob], "crux8-climber-card.png", { type: "image/png" });
+        if (nav.canShare && nav.canShare({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file], title: "Crux8 Play" });
+            onShareSuccess();
+            setNote(tr("savedNote", lang));
+          } catch {
+            /* dismissed — stay put, nothing else to do */
+          }
+          return;
+        }
         window.open(cardUrl(), "_blank");
         setNote(tr("longPressNote", lang));
         return;
