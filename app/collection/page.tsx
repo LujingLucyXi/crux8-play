@@ -12,7 +12,14 @@ import {
   discoveredCount,
   type Collection,
 } from "@/lib/collection";
-import { makeCrewCode, createCrew } from "@/lib/crew";
+import { makeCrewCode, createCrew, markCreatedCrew } from "@/lib/crew";
+import {
+  MILESTONES,
+  achievedMilestones,
+  totalPoints,
+  checkNewUnlocks,
+  type Milestone,
+} from "@/lib/milestones";
 
 const T = {
   title: { en: "Card Collection", zh: "卡片收藏" },
@@ -35,6 +42,9 @@ const T = {
   },
   shareFullSet: { en: "✦ Share my full set", zh: "✦ 分享我的全套收藏" },
   fullSetShared: { en: "Full set shared ✨", zh: "已分享 ✨" },
+  cruxGold: { en: "Crux Gold", zh: "Crux 金币" },
+  milestonesTitle: { en: "Milestones", zh: "成就" },
+  unlockedNow: { en: "Milestone unlocked!", zh: "解锁新成就！" },
   startCrew: { en: "🪢 Start a climbing crew", zh: "🪢 创建攀岩小队" },
   crewFail: {
     en: "Couldn't create the crew — is the database set up?",
@@ -49,10 +59,16 @@ export default function CollectionPage() {
   const [col, setCol] = useState<Collection | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [crewBusy, setCrewBusy] = useState(false);
+  const [points, setPoints] = useState(0);
+  const [newUnlocks, setNewUnlocks] = useState<Milestone[]>([]);
+  const [achievedIds, setAchievedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (/^zh/i.test(navigator.language || "")) setLang("zh");
     setCol(loadCollection());
+    setPoints(totalPoints());
+    setNewUnlocks(checkNewUnlocks());
+    setAchievedIds(new Set(achievedMilestones().map((m) => m.id)));
   }, []);
 
   const t = (k: keyof typeof T) => T[k][lang];
@@ -65,6 +81,7 @@ export default function CollectionPage() {
     const ok = await createCrew(code, col.owned, col.lastDna || []);
     setCrewBusy(false);
     if (ok) {
+      markCreatedCrew(code);
       window.location.href = `/crew/${code}`;
     } else {
       setNote(t("crewFail"));
@@ -125,6 +142,27 @@ export default function CollectionPage() {
       <h1 className="mt-2 font-display text-2xl font-bold text-[#F5EFE0]">
         {t("title")}
       </h1>
+
+      {/* Crux Gold balance */}
+      <div className="mt-3 flex items-center gap-2 rounded-full bg-gold/10 px-4 py-2 ring-1 ring-gold/40">
+        <span className="text-lg">🪙</span>
+        <span className="font-display text-lg font-bold text-gold">{points}</span>
+        <span className="text-xs font-semibold tracking-wide text-gold/70">
+          {t("cruxGold")}
+        </span>
+      </div>
+
+      {/* Fresh milestone unlocks */}
+      {newUnlocks.length > 0 && (
+        <div className="mt-4 w-full max-w-sm rounded-3xl bg-gradient-to-br from-[#F6D47C]/25 via-gold/10 to-transparent p-4 text-center ring-1 ring-gold/50">
+          <p className="text-sm font-bold tracking-wide text-gold">{t("unlockedNow")}</p>
+          {newUnlocks.map((m) => (
+            <p key={m.id} className="mt-1 text-sm font-semibold text-[#F5EFE0]">
+              {m.icon} {m.name[lang]} <span className="text-gold">+{m.points} 🪙</span>
+            </p>
+          ))}
+        </div>
+      )}
 
       {/* Progress */}
       <div className="mt-4 w-full max-w-sm">
@@ -212,6 +250,42 @@ export default function CollectionPage() {
       </div>
 
       <p className="mt-6 max-w-xs text-center text-xs text-white/45">{t("hint")}</p>
+
+      {/* Milestones */}
+      <p className="mt-8 text-center text-xs font-bold tracking-[0.3em] text-white/40">
+        {t("milestonesTitle")}
+      </p>
+      <div className="mt-3 grid w-full max-w-sm grid-cols-2 gap-3">
+        {MILESTONES.map((m) => {
+          const done = achievedIds.has(m.id);
+          return (
+            <div
+              key={m.id}
+              className={[
+                "rounded-2xl p-3 ring-1",
+                done
+                  ? "bg-gold/10 ring-gold/40"
+                  : "bg-white/[0.03] ring-white/10 opacity-60",
+              ].join(" ")}
+            >
+              <p className="text-lg">{done ? m.icon : "🔒"}</p>
+              <p
+                className={`mt-1 text-sm font-bold ${done ? "text-gold" : "text-white/60"}`}
+              >
+                {m.name[lang]}
+              </p>
+              <p className="mt-0.5 text-[11px] leading-snug text-white/45">
+                {m.desc[lang]}
+              </p>
+              <p
+                className={`mt-1 text-xs font-bold ${done ? "text-gold" : "text-white/35"}`}
+              >
+                +{m.points} 🪙
+              </p>
+            </div>
+          );
+        })}
+      </div>
 
       {col?.owned && (
         <>

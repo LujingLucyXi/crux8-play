@@ -122,6 +122,7 @@ export async function getCrewMembers(code: string): Promise<CrewMember[] | null>
 // --- localStorage helpers (per-device join state) ---
 
 const JOINED_KEY = "crux8-crews-joined";
+const CREATED_KEY = "crux8-crews-created";
 const PENDING_KEY = "crux8-pending-crew";
 
 export function hasJoinedCrew(code: string): boolean {
@@ -138,6 +139,35 @@ export function markJoinedCrew(code: string) {
     const list: string[] = JSON.parse(localStorage.getItem(JOINED_KEY) || "[]");
     const up = code.toUpperCase();
     if (!list.includes(up)) localStorage.setItem(JOINED_KEY, JSON.stringify([...list, up]));
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getJoinedCrews(): string[] {
+  try {
+    const list = JSON.parse(localStorage.getItem(JOINED_KEY) || "[]");
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+export function getCreatedCrews(): string[] {
+  try {
+    const list = JSON.parse(localStorage.getItem(CREATED_KEY) || "[]");
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+export function markCreatedCrew(code: string) {
+  try {
+    const list = getCreatedCrews();
+    const up = code.toUpperCase();
+    if (!list.includes(up))
+      localStorage.setItem(CREATED_KEY, JSON.stringify([...list, up]));
   } catch {
     /* ignore */
   }
