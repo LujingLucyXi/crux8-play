@@ -18,7 +18,16 @@ export interface CrewMember {
   id: string;
   archetype_id: string;
   dna: number[];
+  display_name: string | null;
+  email: string | null;
   created_at: string;
+}
+
+export interface CrewIdentity {
+  archetypeId: string;
+  dna: number[];
+  displayName: string;
+  email: string | null;
 }
 
 // Creates the crew and adds the creator as the first member.
@@ -38,23 +47,60 @@ export async function createCrew(
   }
 }
 
-export async function joinCrew(
+// Identity-based join. Each email maps to their LATEST result within a crew:
+// re-joining with the same email updates the row instead of duplicating it.
+export async function joinCrewWithIdentity(
   code: string,
-  archetypeId: string,
-  dna: number[]
+  identity: CrewIdentity
 ): Promise<boolean> {
   const c = getSupabase();
   if (!c) return false;
+  const CODE = code.toUpperCase();
   try {
+    if (identity.email) {
+      const { data: existing } = await c
+        .from("crew_members")
+        .select("id")
+        .eq("crew_code", CODE)
+        .eq("email", identity.email)
+        .limit(1)
+        .maybeSingle();
+      if (existing) {
+        const { error } = await c
+          .from("crew_members")
+          .update({
+            archetype_id: identity.archetypeId,
+            dna: identity.dna,
+            display_name: identity.displayName,
+          })
+          .eq("id", (existing as { id: string }).id);
+        return !error;
+      }
+    }
     const { error } = await c.from("crew_members").insert({
-      crew_code: code,
-      archetype_id: archetypeId,
-      dna,
+      crew_code: CODE,
+      archetype_id: identity.archetypeId,
+      dna: identity.dna,
+      display_name: identity.displayName,
+      email: identity.email,
     });
     return !error;
   } catch {
     return false;
   }
+}
+
+export async function joinCrew(
+  code: string,
+  archetypeId: string,
+  dna: number[]
+): Promise<boolean> {
+  return joinCrewWithIdentity(code, {
+    archetypeId,
+    dna,
+    displayName: archetypeId,
+    email: null,
+  });
 }
 
 export async function getCrewMembers(code: string): Promise<CrewMember[] | null> {
@@ -63,7 +109,7 @@ export async function getCrewMembers(code: string): Promise<CrewMember[] | null>
   try {
     const { data, error } = await c
       .from("crew_members")
-      .select("id,archetype_id,dna,created_at")
+      .select("id,archetype_id,dna,display_name,email,created_at")
       .eq("crew_code", code.toUpperCase())
       .order("created_at", { ascending: true });
     if (error) return null;

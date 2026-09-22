@@ -26,6 +26,15 @@ const T = {
     zh: "打开朋友分享的卡片，就能发现新的类型。",
   },
   shareCta: { en: "🃏 Share my card to be spotted", zh: "🃏 分享我的卡片" },
+  almostThere: { en: "Only {n} to go!", zh: "还差 {n} 张！" },
+  oneMore: { en: "One more card to complete the set!", zh: "再来一张就集齐了！" },
+  fullSet: { en: "✦ FULL SET COMPLETE ✦", zh: "✦ 全套收集完成 ✦" },
+  fullSetSub: {
+    en: "All 15 climber cards. Legend of the wall.",
+    zh: "15 张卡片全部集齐，你是岩壁传奇。",
+  },
+  shareFullSet: { en: "✦ Share my full set", zh: "✦ 分享我的全套收藏" },
+  fullSetShared: { en: "Full set shared ✨", zh: "已分享 ✨" },
   startCrew: { en: "🪢 Start a climbing crew", zh: "🪢 创建攀岩小队" },
   crewFail: {
     en: "Couldn't create the crew — is the database set up?",
@@ -59,6 +68,28 @@ export default function CollectionPage() {
       window.location.href = `/crew/${code}`;
     } else {
       setNote(t("crewFail"));
+    }
+  }
+
+  async function handleShareFullSet() {
+    const text =
+      lang === "zh"
+        ? `我集齐了全部 15 张 Crux8 攀岩人格卡片 ✦ 你是哪种？`
+        : `I collected all 15 Crux8 climber cards ✦ What's your archetype?`;
+    const url = window.location.origin;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Crux8 Play", text, url });
+        return;
+      } catch {
+        /* cancelled */
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      setNote(t("fullSetShared"));
+    } catch {
+      setNote(`${text} ${url}`);
     }
   }
 
@@ -112,6 +143,28 @@ export default function CollectionPage() {
           />
         </div>
       </div>
+
+      {/* Incentives: the itch, and the payoff */}
+      {found < 15 ? (
+        <p className="mt-3 text-sm font-semibold text-gold/90">
+          {found === 14
+            ? t("oneMore")
+            : t("almostThere").replace("{n}", String(15 - found))}
+        </p>
+      ) : (
+        <div className="mt-4 w-full max-w-sm rounded-3xl bg-gradient-to-br from-[#F6D47C]/25 via-gold/10 to-transparent p-5 text-center shadow-[0_0_30px_rgba(246,212,124,0.25)] ring-1 ring-gold/50">
+          <p className="font-display text-lg font-bold tracking-wide text-gold">
+            {t("fullSet")}
+          </p>
+          <p className="mt-1 text-sm text-white/60">{t("fullSetSub")}</p>
+          <button
+            onClick={handleShareFullSet}
+            className="tap-target mt-3 w-full rounded-2xl bg-gradient-to-r from-[#F6D47C] via-[#E8B83A] to-[#B9862A] py-3 text-base font-bold text-[#1a1206] shadow-lg shadow-gold/25"
+          >
+            {t("shareFullSet")}
+          </button>
+        </div>
+      )}
 
       {/* Dex grid */}
       <div className="mt-6 grid w-full max-w-sm grid-cols-3 gap-4">
