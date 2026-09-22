@@ -9,6 +9,7 @@ let enabled = false;
 export type AnalyticsEvent =
   | "page_view"
   | "game_started"
+  | "nickname_set"
   | "question_answered"
   | "game_completed"
   | "result_viewed"

@@ -34,6 +34,12 @@ export const UI = {
   screenshotNote: { en: "Screenshot this screen to share your result 📸", zh: "截图这个页面来分享结果 📸" },
   playAgain: { en: "Play again", zh: "再玩一次" },
 
+  nicknameTitle: { en: "What should we call you?", zh: "怎么称呼你？" },
+  nicknameSub: { en: "Your House will remember this name.", zh: "你的 House 会记住这个名字。" },
+  nicknamePlaceholder: { en: "Your crag name", zh: "岩壁上的名字" },
+  nicknameStart: { en: "START CLIMBING", zh: "开始攀爬" },
+  nicknameSkip: { en: "Skip for now", zh: "先跳过" },
+
   ctaTitle: { en: "Join the Crux8 app waitlist", zh: "最酷的攀岩社交 App，敬请期待 ✨" },
   ctaSub: { en: "Promos, buddies, and good vibes coming your way.", zh: "优惠、搭子和好心情，马上安排。" },
   ctaButton: { en: "Follow Crux8 Climbing →", zh: "关注 Crux8 Climbing →" },

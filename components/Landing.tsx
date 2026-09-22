@@ -16,12 +16,16 @@ export default function Landing({
   onLang,
   playCount,
   onStart,
+  nickname,
+  houseEmoji,
 }: {
   game: GameDefinition;
   lang: Lang;
   onLang: (l: Lang) => void;
   playCount: string;
   onStart: () => void;
+  nickname?: string;
+  houseEmoji?: string;
 }) {
   const marquee = [...results, ...results];
   return (
@@ -75,6 +79,13 @@ export default function Landing({
           <p className="mt-3 text-lg font-medium text-gold/90">{L(game.subtitle, lang)}</p>
         )}
         <p className="mt-4 max-w-xs text-base text-white/60">{tr("heroSub", lang)}</p>
+        {nickname && (
+          <p className="mt-3 text-base font-semibold text-gold/90">
+            {lang === "zh"
+              ? `欢迎回来，${nickname}${houseEmoji ? ` ${houseEmoji}` : ""}`
+              : `Welcome back, ${nickname}${houseEmoji ? ` ${houseEmoji}` : ""}`}
+          </p>
+        )}
       </motion.div>
 
       <motion.div

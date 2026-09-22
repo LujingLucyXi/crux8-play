@@ -17,12 +17,14 @@ import {
   seedFromSession,
 } from "@/lib/session";
 import Landing from "./Landing";
+import NicknameGate from "./NicknameGate";
 import QuestionCard from "./QuestionCard";
 import RouteProgress from "./RouteProgress";
 import ResultScreen from "./ResultScreen";
 import BackgroundFX from "./BackgroundFX";
+import { HOUSE_KEY, NICKNAME_KEY, getHouseById } from "@/lib/houses";
 
-type Phase = "landing" | "playing" | "calculating" | "result";
+type Phase = "landing" | "nickname" | "playing" | "calculating" | "result";
 
 
 export default function GameEngine({ game }: { game: GameDefinition }) {
@@ -34,6 +36,8 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
   const [result, setResult] = useState<ResultType | null>(null);
   const [dna, setDna] = useState<DnaScore[]>([]);
   const [liveCount, setLiveCount] = useState<number | null>(null);
+  const [nickname, setNickname] = useState("");
+  const [savedHouseId, setSavedHouseId] = useState<string | null>(null);
 
   const sessionRef = useRef<string>("");
   const seedRef = useRef<number>(0);
@@ -47,6 +51,13 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
     if (typeof navigator !== "undefined" && /^zh/i.test(navigator.language || "")) {
       setLang("zh");
     }
+    // Zero-friction identity: remember nickname + house across visits.
+    try {
+      setNickname(localStorage.getItem(NICKNAME_KEY) ?? "");
+      setSavedHouseId(localStorage.getItem(HOUSE_KEY));
+    } catch {
+      /* private mode — identity just won't persist */
+    }
   }, []);
 
   const playCountLabel = useMemo(() => {
@@ -56,9 +67,21 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
     return tr("joinCommunity", lang);
   }, [liveCount, lang]);
 
+  function handleNicknameSubmit(name: string) {
+    const trimmed = name.trim();
+    setNickname(trimmed);
+    try {
+      if (trimmed) localStorage.setItem(NICKNAME_KEY, trimmed);
+      else localStorage.removeItem(NICKNAME_KEY);
+    } catch {
+      /* ignore */
+    }
+    track("nickname_set", { has_name: !!trimmed, lang });
+    handleStart();
+  }
+
   function handleStart() {
-    const sid = makeSessionId();
-    sessionRef.current = sid;
+    const sid = makeSessionId();    sessionRef.current = sid;
     seedRef.current = seedFromSession(sid);
     startedAtRef.current = new Date().toISOString();
     setAnswers([]);
@@ -137,7 +160,18 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
           lang={lang}
           onLang={setLang}
           playCount={playCountLabel}
-          onStart={handleStart}
+          onStart={() => setPhase("nickname")}
+          nickname={nickname}
+          houseEmoji={getHouseById(savedHouseId)?.emoji}
+        />
+      )}
+
+      {phase === "nickname" && (
+        <NicknameGate
+          key="nickname"
+          lang={lang}
+          initial={nickname}
+          onSubmit={handleNicknameSubmit}
         />
       )}
 
@@ -193,6 +227,7 @@ export default function GameEngine({ game }: { game: GameDefinition }) {
             result={result}
             dna={dna}
             lang={lang}
+            nickname={nickname}
             onShareClick={() =>
               track("share_clicked", {
                 session_id: sessionRef.current,

@@ -8,6 +8,7 @@ import { L } from "@/lib/gameTypes";
 import { tr } from "@/lib/i18n";
 import { recordResult } from "@/lib/collection";
 import { getPendingCrew } from "@/lib/crew";
+import { HOUSE_KEY, getHouseForArchetype } from "@/lib/houses";
 import StatBar from "./StatBar";
 import BackgroundFX from "./BackgroundFX";
 import EmailCapture from "./EmailCapture";
@@ -35,6 +36,7 @@ export default function ResultScreen({
   result,
   dna,
   lang,
+  nickname,
   onShareClick,
   onShareSuccess,
   onInvite,
@@ -44,6 +46,7 @@ export default function ResultScreen({
   result: ResultType;
   dna: DnaScore[];
   lang: Lang;
+  nickname: string;
   onShareClick: () => void;
   onShareSuccess: () => void;
   onInvite: () => void;
@@ -56,8 +59,10 @@ export default function ResultScreen({
   const [details, setDetails] = useState(false);
   const [pendingCrew, setPendingCrew] = useState<string | null>(null);
   const recordedRef = useRef(false);
+  const house = getHouseForArchetype(result.id);
 
-  // Own this card in the collection (drives the dex + gold foil count).
+  // Own this card in the collection (drives the dex + gold foil count),
+  // and remember the House so the landing page can welcome you back.
   useEffect(() => {
     if (recordedRef.current) return;
     recordedRef.current = true;
@@ -66,7 +71,20 @@ export default function ResultScreen({
       dna.map((d) => d.value)
     );
     setPendingCrew(getPendingCrew());
+    try {
+      localStorage.setItem(HOUSE_KEY, house.id);
+    } catch {
+      /* ignore */
+    }
   }, [result.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const heroLine = flipped
+    ? nickname
+      ? lang === "zh"
+        ? `${nickname}，你是`
+        : `${nickname}, you are`
+      : tr("youAre", lang)
+    : tr("yourCard", lang);
 
   // Server-rendered PNG (reliable on every device). Includes language.
   function cardUrl(): string {
@@ -89,8 +107,8 @@ export default function ResultScreen({
     setNote(null);
     const shareText =
       lang === "zh"
-        ? `我在 Crux8 Play 的攀岩人格是「${L(result.name, "zh")}」🧗 你是哪种攀岩搭子？`
-        : `I'm ${L(result.name, "en")} on Crux8 Play 🧗 What's your Climber DNA?`;
+        ? `我在 Crux8 Play 是「${L(result.name, "zh")}」${house.emoji}${L(house.name, "zh")}${nickname ? ` · 我是 ${nickname}` : ""} 🧗 你是哪种攀岩搭子？`
+        : `I'm ${L(result.name, "en")} of ${L(house.name, "en")} ${house.emoji}${nickname ? ` — ${nickname}` : ""} on Crux8 Play 🧗 What's your Climber DNA?`;
     const pageUrl = cardPageUrl();
     const nav = navigator as Navigator & { canShare?: (d?: ShareData) => boolean };
     try {
@@ -208,7 +226,7 @@ export default function ResultScreen({
       </a>
 
       <p className="text-center text-sm font-semibold tracking-[0.3em] text-white/50">
-        {flipped ? tr("youAre", lang) : tr("yourCard", lang)}
+        {heroLine}
       </p>
 
       {/* Card flip: gold back <-> archetype hero */}
@@ -309,6 +327,38 @@ export default function ResultScreen({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
+            {/* Your House: the belonging layer. No sign-up — the nickname +
+                house badge is the identity, and it persists in localStorage. */}
+            <div
+              className="mt-6 overflow-hidden rounded-3xl ring-1 ring-white/10"
+              style={{ border: `1px solid ${house.color}55` }}
+            >
+              <div
+                className="bg-white/[0.05] p-5 text-center"
+                style={{ boxShadow: `inset 0 0 48px ${house.color}22` }}
+              >
+                <div className="text-4xl">{house.emoji}</div>
+                <p
+                  className="mt-2 font-display text-2xl font-bold"
+                  style={{ color: house.color }}
+                >
+                  {L(house.name, lang)}
+                </p>
+                <p className="mt-1 text-sm font-medium text-white/60">
+                  “{L(house.slogan, lang)}”
+                </p>
+                <p className="mt-2 text-sm font-semibold text-gold">
+                  {nickname
+                    ? lang === "zh"
+                      ? `${nickname}，欢迎回家 🧗`
+                      : `Welcome home, ${nickname} 🧗`
+                    : lang === "zh"
+                      ? "欢迎回家 🧗"
+                      : "Welcome home 🧗"}
+                </p>
+              </div>
+            </div>
+
             <div className="mt-6">
               <p className="mb-3 text-center text-sm font-semibold tracking-[0.2em] text-white/50">
                 {tr("yourDna", lang)}
