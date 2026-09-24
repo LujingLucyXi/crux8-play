@@ -124,12 +124,12 @@ export const questions: Question[] = [
   },
   {
     id: "q15",
-    prompt: { en: "You feel the best when…", zh: "你最爽的时刻是…" },
+    prompt: { en: "Your highlight moment is…", zh: "你最高光的时刻是…" },
     answers: [
-      { id: "A", label: { en: "A stranger praises your send.", zh: "陌生人夸你的完成。" }, scores: { social: 1, stoke: 2 } },
-      { id: "B", label: { en: "You bump into an old climbing friend.", zh: "偶遇老友。" }, scores: { social: 3 } },
-      { id: "C", label: { en: "You finally send a long-time project.", zh: "终于磕下磕了很久的项目。" }, scores: { power: 1, beta: 2 } },
-      { id: "D", label: { en: "You break in shiny new gear / shoes.", zh: "开箱全新的装备 / 岩鞋。" }, scores: { adventure: 1, beta: 1, stoke: 1 } },
+      { id: "A", label: { en: "The crowd erupts when you send.", zh: "大伙儿为你的完攀欢呼。" }, scores: { social: 1, stoke: 2 } },
+      { id: "B", label: { en: "New friends on the mat — or old friends at the door.", zh: "在垫子上交到新朋友，或偶遇老朋友。" }, scores: { social: 3 } },
+      { id: "C", label: { en: "You finally send the project that's haunted you for weeks.", zh: "终于拿下磕了很久的项目线。" }, scores: { power: 1, beta: 2 } },
+      { id: "D", label: { en: "Fresh gear unboxed — new shoes, new psyche.", zh: "开箱新装备新鞋，即刻开战。" }, scores: { adventure: 1, beta: 1, stoke: 1 } },
     ],
   },
   {
