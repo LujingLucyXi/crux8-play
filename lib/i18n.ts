@@ -37,7 +37,7 @@ export const UI = {
   nicknameTitle: { en: "What should we call you?", zh: "怎么称呼你？" },
   nicknameSub: { en: "Your House will remember this name.", zh: "你的 House 会记住这个名字。" },
   nicknamePlaceholder: { en: "Your crag name", zh: "岩壁上的名字" },
-  nicknameStart: { en: "START CLIMBING", zh: "开始攀爬" },
+  nicknameStart: { en: "START TEST", zh: "开始测试" },
   nicknameSkip: { en: "Skip for now", zh: "先跳过" },
 
   ctaTitle: { en: "Join the Crux8 app waitlist", zh: "最酷的攀岩社交 App，敬请期待 ✨" },
