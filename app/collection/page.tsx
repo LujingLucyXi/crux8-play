@@ -46,6 +46,9 @@ const T = {
   milestonesTitle: { en: "Milestones", zh: "成就" },
   unlockedNow: { en: "Milestone unlocked!", zh: "解锁新成就！" },
   startCrew: { en: "🪢 Start a climbing crew", zh: "🪢 创建攀岩小队" },
+  crewNamePlaceholder: { en: "Name your crew (optional)", zh: "给小队起个名字（可选）" },
+  crewCreate: { en: "Create crew ✓", zh: "创建小队 ✓" },
+  crewCancel: { en: "Cancel", zh: "取消" },
   crewFail: {
     en: "Couldn't create the crew.",
     zh: "创建小队失败。",
@@ -63,6 +66,8 @@ export default function CollectionPage() {
   const [col, setCol] = useState<Collection | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [crewBusy, setCrewBusy] = useState(false);
+  const [crewNaming, setCrewNaming] = useState(false);
+  const [crewName, setCrewName] = useState("");
   const [points, setPoints] = useState(0);
   const [newUnlocks, setNewUnlocks] = useState<Milestone[]>([]);
   const [achievedIds, setAchievedIds] = useState<Set<string>>(new Set());
@@ -82,7 +87,7 @@ export default function CollectionPage() {
     if (!col?.owned || crewBusy) return;
     setCrewBusy(true);
     const code = makeCrewCode();
-    const ok = await createCrew(code, col.owned, col.lastDna || []);
+    const ok = await createCrew(code, col.owned, col.lastDna || [], crewName);
     setCrewBusy(false);
     if (ok) {
       markCreatedCrew(code);
@@ -305,13 +310,42 @@ export default function CollectionPage() {
           >
             {t("shareCta")}
           </button>
-          <button
-            onClick={handleStartCrew}
-            disabled={crewBusy}
-            className="tap-target mt-3 w-full max-w-sm rounded-2xl bg-white/10 py-4 text-lg font-bold text-white ring-1 ring-white/20 disabled:opacity-50"
-          >
-            {crewBusy ? "…" : t("startCrew")}
-          </button>
+          {!crewNaming ? (
+            <button
+              onClick={() => setCrewNaming(true)}
+              className="tap-target mt-3 w-full max-w-sm rounded-2xl bg-white/10 py-4 text-lg font-bold text-white ring-1 ring-white/20"
+            >
+              {t("startCrew")}
+            </button>
+          ) : (
+            <div className="mt-3 w-full max-w-sm rounded-3xl bg-white/[0.05] p-4 ring-1 ring-white/10">
+              <input
+                value={crewName}
+                onChange={(e) => setCrewName(e.target.value)}
+                placeholder={t("crewNamePlaceholder")}
+                maxLength={30}
+                className="w-full rounded-xl bg-black/40 px-4 py-3 text-base text-white placeholder:text-white/30 ring-1 ring-white/15 focus:outline-none focus:ring-gold/60"
+              />
+              <div className="mt-2 flex gap-2">
+                <button
+                  onClick={handleStartCrew}
+                  disabled={crewBusy}
+                  className="tap-target flex-1 rounded-2xl bg-gradient-to-r from-[#F6D47C] via-[#E8B83A] to-[#B9862A] py-3 text-base font-bold text-[#1a1206] shadow-lg shadow-gold/25 disabled:opacity-50"
+                >
+                  {crewBusy ? "…" : t("crewCreate")}
+                </button>
+                <button
+                  onClick={() => {
+                    setCrewNaming(false);
+                    setCrewName("");
+                  }}
+                  className="tap-target rounded-2xl bg-white/10 px-5 py-3 text-base font-bold text-white ring-1 ring-white/20"
+                >
+                  {t("crewCancel")}
+                </button>
+              </div>
+            </div>
+          )}
         </>
       )}
       {note && <p className="mt-3 text-center text-sm font-medium text-gold">{note}</p>}

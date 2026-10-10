@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID.app.crux8.ios"],
+        "components": [
+          {
+            "/": "/claim",
+            "comment": "Claim your Climber DNA in the Crux8 app"
+          }
+        ]
+      }
+    ]
+  }
+}

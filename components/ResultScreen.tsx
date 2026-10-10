@@ -9,9 +9,9 @@ import { tr } from "@/lib/i18n";
 import { recordResult } from "@/lib/collection";
 import { getPendingCrew } from "@/lib/crew";
 import { HOUSE_KEY, getHouseForArchetype } from "@/lib/houses";
+import { track } from "@/lib/analytics";
 import StatBar from "./StatBar";
 import BackgroundFX from "./BackgroundFX";
-import EmailCapture from "./EmailCapture";
 import Emblem from "./Emblem";
 
 // Lightens a hex color if it's too dark to read on the near-black background.
@@ -99,6 +99,23 @@ export default function ResultScreen({
       typeof window !== "undefined" ? window.location.origin : "https://play.crux8.app";
     const s = dna.map((d) => d.value).join(",");
     return `${origin}/c/${encodeURIComponent(result.id)}?s=${s}&l=${lang}`;
+  }
+
+  // Claim link: self-contained quiz → app handoff. The app's /claim route
+  // parses these params (no waitlist, no backend lookup needed).
+  //   r = archetype id, d = 6 DNA values (power,beta,social,adventure,chill,stoke),
+  //   n = nickname, h = house id, l = lang
+  function claimUrl(): string {
+    const origin =
+      typeof window !== "undefined" ? window.location.origin : "https://play.crux8.app";
+    const params = new URLSearchParams({
+      r: result.id,
+      d: dna.map((d) => d.value).join(","),
+      h: house.id,
+      l: lang,
+    });
+    if (nickname) params.set("n", nickname);
+    return `${origin}/claim?${params.toString()}`;
   }
 
   async function handleShare() {
@@ -420,7 +437,18 @@ export default function ResultScreen({
                 {tr("invite", lang)}
               </motion.button>
 
-              <EmailCapture lang={lang} onSubmit={onWaitlist} />
+              <Link
+                href={claimUrl()}
+                onClick={() => track("claim_cta_clicked", { result_id: result.id })}
+                className="tap-target block w-full rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#EC4899] py-4 text-center text-lg font-bold text-white shadow-lg shadow-purple-500/25"
+              >
+                {lang === "zh"
+                  ? "前往 Crux8 App，认识新的攀岩 / 徒步搭子 🧗"
+                  : "Continue to the Crux8 app to meet new climbing/hiking friends 🧗"}
+              </Link>
+              <p className="-mt-1 text-center text-xs text-white/45">
+                {lang === "zh" ? "你的 Climber DNA 会一起带过去" : "Your Climber DNA comes with you"}
+              </p>
 
               <Link
                 href="/collection"

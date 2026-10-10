@@ -17,6 +17,7 @@ export type AnalyticsEvent =
   | "share_success"
   | "play_again"
   | "crux8_cta_clicked"
+  | "claim_cta_clicked"
   | "waitlist_submitted"
   | "invite_clicked";
 

@@ -9,8 +9,11 @@ import BackgroundFX from "@/components/BackgroundFX";
 import Emblem from "@/components/Emblem";
 import StatBar from "@/components/StatBar";
 import {
+  getCrew,
   getCrewMembers,
   joinCrewWithIdentity,
+  renameCrew,
+  getCreatedCrews,
   hasJoinedCrew,
   markJoinedCrew,
   setPendingCrew,
@@ -39,6 +42,11 @@ function vibeMatch(a: number[], b: number[]): number | null {
 export default function CrewBoard({ code }: { code: string }) {
   const [lang, setLang] = useState<Lang>("en");
   const [members, setMembers] = useState<CrewMember[] | null>(null);
+  const [crewName, setCrewName] = useState<string | null>(null);
+  const [isCreator, setIsCreator] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
+  const [savingName, setSavingName] = useState(false);
   const [joined, setJoined] = useState(false);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
@@ -54,6 +62,8 @@ export default function CrewBoard({ code }: { code: string }) {
 
   const refresh = useCallback(async () => {
     setMembers(await getCrewMembers(CODE));
+    const crew = await getCrew(CODE);
+    setCrewName(crew?.name ?? null);
   }, [CODE]);
 
   useEffect(() => {
@@ -62,6 +72,7 @@ export default function CrewBoard({ code }: { code: string }) {
     setOwnedId(c.owned);
     setOwnedDna(c.lastDna || []);
     setJoined(hasJoinedCrew(CODE));
+    setIsCreator(getCreatedCrews().includes(CODE));
     try {
       const savedEmail = localStorage.getItem("crux8-email") || "";
       if (savedEmail) setEmail(savedEmail);
@@ -123,7 +134,8 @@ export default function CrewBoard({ code }: { code: string }) {
 
   async function handleShare() {
     const url = `${window.location.origin}/crew/${CODE}`;
-    const text = zh ? `加入我的攀岩小队 🧗 ${CODE}` : `Join my climbing crew 🧗 ${CODE}`;
+    const label = crewName || CODE;
+    const text = zh ? `加入我的攀岩小队「${label}」🧗` : `Join my climbing crew "${label}" 🧗`;
     if (navigator.share) {
       try {
         await navigator.share({ title: "Crux8 Play", text, url });
@@ -140,6 +152,21 @@ export default function CrewBoard({ code }: { code: string }) {
     }
   }
 
+  async function handleRename(e: React.FormEvent) {
+    e.preventDefault();
+    if (savingName) return;
+    setSavingName(true);
+    const ok = await renameCrew(CODE, nameDraft);
+    setSavingName(false);
+    if (!ok) {
+      setNote(zh ? "改名失败，请再试一次" : "Couldn't rename — try again");
+      return;
+    }
+    setEditingName(false);
+    setNote(null);
+    refresh();
+  }
+
   const memberResult = (m: CrewMember) =>
     results.find((x) => x.id === m.archetype_id);
 
@@ -152,8 +179,50 @@ export default function CrewBoard({ code }: { code: string }) {
         {zh ? "你被邀请了" : "YOU'RE INVITED"}
       </p>
       <h1 className="mt-2 text-center font-display text-2xl font-bold text-[#F5EFE0]">
-        {zh ? `加入攀岩小队` : `Join climbing crew`}
+        {crewName || (zh ? `加入攀岩小队` : `Join climbing crew`)}
+        {isCreator && !editingName && (
+          <button
+            onClick={() => {
+              setNameDraft(crewName || "");
+              setEditingName(true);
+            }}
+            aria-label={zh ? "给小队改名" : "Rename crew"}
+            title={zh ? "给小队改名" : "Rename crew"}
+            className="ml-2 align-middle text-lg text-gold/70 transition active:scale-90"
+          >
+            ✎
+          </button>
+        )}
       </h1>
+      {editingName && (
+        <form
+          onSubmit={handleRename}
+          className="mt-3 flex w-full max-w-sm gap-2"
+        >
+          <input
+            value={nameDraft}
+            onChange={(e) => setNameDraft(e.target.value)}
+            placeholder={zh ? "小队名字（留空则清除）" : "Crew name (blank to clear)"}
+            maxLength={30}
+            autoFocus
+            className="flex-1 rounded-xl bg-black/40 px-4 py-2.5 text-base text-white placeholder:text-white/30 ring-1 ring-white/15 focus:outline-none focus:ring-gold/60"
+          />
+          <button
+            type="submit"
+            disabled={savingName}
+            className="tap-target rounded-xl bg-gold px-4 py-2.5 text-base font-bold text-[#1a1206] disabled:opacity-50"
+          >
+            {savingName ? "…" : "✓"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setEditingName(false)}
+            className="tap-target rounded-xl bg-white/10 px-4 py-2.5 text-base font-bold text-white ring-1 ring-white/20"
+          >
+            ✕
+          </button>
+        </form>
+      )}
       <p className="mt-1 font-display text-3xl font-bold tracking-[0.2em] text-gold">
         {CODE}
       </p>

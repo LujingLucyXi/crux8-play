@@ -14,6 +14,12 @@ export function makeCrewCode(): string {
   return s;
 }
 
+export interface Crew {
+  code: string;
+  name: string | null;
+  created_at: string;
+}
+
 export interface CrewMember {
   id: string;
   archetype_id: string;
@@ -49,16 +55,54 @@ function fail(reason: string): false {
 export async function createCrew(
   code: string,
   archetypeId: string,
-  dna: number[]
+  dna: number[],
+  name?: string
 ): Promise<boolean> {
   const c = getSupabase();
   if (!c) return fail("not-configured: Supabase env vars missing (no request sent)");
   try {
+<<<<<<< HEAD
     const { error } = await c.from("crews").insert({ code });
     if (error) return fail(`crews insert: ${error.message} (${error.code})`);
+=======
+    const clean = (name || "").trim().slice(0, 30) || null;
+    const { error } = await c.from("crews").insert({ code, name: clean });
+    if (error) return false;
+>>>>>>> Crew naming: optional name at creation, creator rename on board, name in share text + metadata
     return joinCrew(code, archetypeId, dna);
   } catch (e) {
     return fail(`crews request threw: ${e instanceof Error ? e.message : String(e)}`);
+  }
+}
+
+export async function getCrew(code: string): Promise<Crew | null> {
+  const c = getSupabase();
+  if (!c) return null;
+  try {
+    const { data, error } = await c
+      .from("crews")
+      .select("code,name,created_at")
+      .eq("code", code.toUpperCase())
+      .maybeSingle();
+    if (error) return null;
+    return (data || null) as Crew | null;
+  } catch {
+    return null;
+  }
+}
+
+export async function renameCrew(code: string, name: string): Promise<boolean> {
+  const c = getSupabase();
+  if (!c) return false;
+  try {
+    const clean = name.trim().slice(0, 30) || null;
+    const { error } = await c
+      .from("crews")
+      .update({ name: clean })
+      .eq("code", code.toUpperCase());
+    return !error;
+  } catch {
+    return false;
   }
 }
 
