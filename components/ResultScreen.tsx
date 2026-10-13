@@ -257,8 +257,15 @@ export default function ResultScreen({
             if (flipped) setDetails(true);
           }}
         >
-          {/* Front: face-down gold card (taller face drives layout via back, so center it) */}
-          <div className="absolute inset-0 flex items-center justify-center [backface-visibility:hidden]">
+          {/* Front: face-down gold card (taller face drives layout via back, so center it).
+              backface-visibility alone is unreliable on mobile Safari (nested animations
+              break it, mirrored text bleeds over the result) — so once the flip lands we
+              hard-hide the front face. */}
+          <div
+            className={`absolute inset-0 flex items-center justify-center [backface-visibility:hidden] ${
+              details ? 'invisible pointer-events-none' : ''
+            }`}
+          >
             <motion.button
               whileTap={{ scale: 0.94 }}
               onClick={() => setFlipped(true)}
@@ -286,7 +293,7 @@ export default function ResultScreen({
                     <span className="font-display text-5xl font-bold text-gold">?</span>
                   </div>
                   <div className="relative text-[10px] font-semibold tracking-[0.5em] text-white/50">
-                    PLAY
+                    TAP TO REVEAL
                   </div>
                 </div>
               </motion.div>
