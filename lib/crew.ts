@@ -61,14 +61,9 @@ export async function createCrew(
   const c = getSupabase();
   if (!c) return fail("not-configured: Supabase env vars missing (no request sent)");
   try {
-<<<<<<< HEAD
-    const { error } = await c.from("crews").insert({ code });
-    if (error) return fail(`crews insert: ${error.message} (${error.code})`);
-=======
     const clean = (name || "").trim().slice(0, 30) || null;
     const { error } = await c.from("crews").insert({ code, name: clean });
     if (error) return false;
->>>>>>> Crew naming: optional name at creation, creator rename on board, name in share text + metadata
     return joinCrew(code, archetypeId, dna);
   } catch (e) {
     return fail(`crews request threw: ${e instanceof Error ? e.message : String(e)}`);
