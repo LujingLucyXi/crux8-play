@@ -101,13 +101,12 @@ export default function ResultScreen({
     return `${origin}/c/${encodeURIComponent(result.id)}?s=${s}&l=${lang}`;
   }
 
-  // Claim link: self-contained quiz → app handoff. The app's /claim route
-  // parses these params (no waitlist, no backend lookup needed).
+  // Claim link: self-contained quiz → app handoff, straight to the live app.
+  // The app's /claim route parses these params (no waitlist, no backend needed).
   //   r = archetype id, d = 6 DNA values (power,beta,social,adventure,chill,stoke),
   //   n = nickname, h = house id, l = lang
+  // Points directly at crux8.app — no play-side interstitial.
   function claimUrl(): string {
-    const origin =
-      typeof window !== "undefined" ? window.location.origin : "https://play.crux8.app";
     const params = new URLSearchParams({
       r: result.id,
       d: dna.map((d) => d.value).join(","),
@@ -115,7 +114,7 @@ export default function ResultScreen({
       l: lang,
     });
     if (nickname) params.set("n", nickname);
-    return `${origin}/claim?${params.toString()}`;
+    return `https://crux8.app/claim?${params.toString()}`;
   }
 
   async function handleShare() {
@@ -403,6 +402,19 @@ export default function ResultScreen({
                   {lang === "zh" ? `🪢 加入小队 ${pendingCrew}` : `🪢 Join crew ${pendingCrew}`}
                 </Link>
               )}
+              <Link
+                href={claimUrl()}
+                onClick={() => track("claim_cta_clicked", { result_id: result.id })}
+                className="tap-target block w-full rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#EC4899] py-4 text-center text-lg font-bold text-white shadow-lg shadow-purple-500/25"
+              >
+                {lang === "zh"
+                  ? "前往 Crux8 App 🧗"
+                  : "Continue to the Crux8 app 🧗"}
+              </Link>
+              <p className="-mt-1 text-center text-xs text-white/45">
+                {lang === "zh" ? "你的 Climber DNA 会一起带过去" : "Your Climber DNA comes with you"}
+              </p>
+
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={handleShare}
@@ -436,19 +448,6 @@ export default function ResultScreen({
               >
                 {tr("invite", lang)}
               </motion.button>
-
-              <Link
-                href={claimUrl()}
-                onClick={() => track("claim_cta_clicked", { result_id: result.id })}
-                className="tap-target block w-full rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#EC4899] py-4 text-center text-lg font-bold text-white shadow-lg shadow-purple-500/25"
-              >
-                {lang === "zh"
-                  ? "前往 Crux8 App，认识新的攀岩 / 徒步搭子 🧗"
-                  : "Continue to the Crux8 app to meet new climbing/hiking friends 🧗"}
-              </Link>
-              <p className="-mt-1 text-center text-xs text-white/45">
-                {lang === "zh" ? "你的 Climber DNA 会一起带过去" : "Your Climber DNA comes with you"}
-              </p>
 
               <Link
                 href="/collection"
